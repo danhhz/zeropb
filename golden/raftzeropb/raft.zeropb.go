@@ -40,7 +40,7 @@ func (m *SnapshotMetadata) Decode(buf []byte) error{
   return zeropb.Decode(m.buf, &m.offsets)
 }
 
-func (m *Message) ConfState(x *ConfState) (bool, error) {
+func (m *SnapshotMetadata) ConfState(x *ConfState) (bool, error) {
   buf := zeropb.GetBytes(m.buf, &m.offsets, 1)
   if buf == nil {
     return false, nil
@@ -70,7 +70,7 @@ func (m *Snapshot) Data() []byte {
   return zeropb.GetBytes(m.buf, &m.offsets, 1)
 }
 
-func (m *Message) Metadata(x *SnapshotMetadata) (bool, error) {
+func (m *Snapshot) Metadata(x *SnapshotMetadata) (bool, error) {
   buf := zeropb.GetBytes(m.buf, &m.offsets, 2)
   if buf == nil {
     return false, nil
@@ -177,14 +177,6 @@ type ConfState struct {
 func (m *ConfState) Decode(buf []byte) error{
   m.buf = buf
   return zeropb.Decode(m.buf, &m.offsets)
-}
-
-func (m *ConfState) Nodes() uint64 {
-  return zeropb.GetUint64(m.buf, &m.offsets, 1)
-}
-
-func (m *ConfState) Learners() uint64 {
-  return zeropb.GetUint64(m.buf, &m.offsets, 2)
 }
 
 type ConfChange struct {
