@@ -4,10 +4,43 @@ package zeropb
 
 import (
 	"encoding/binary"
+	"math"
+	"reflect"
+	"unsafe"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/pkg/errors"
 )
+
+// GetBool gets an encoded bool field with the given field id.
+func GetBool(buf []byte, offsets *FastIntMap, fieldID int) bool {
+	offset, ok := offsets.Get(fieldID)
+	if !ok {
+		return false
+	}
+	x, _ := binary.Uvarint(buf[offset:])
+	return x > 0
+}
+
+// GetInt32 gets an encoded int32 field with the given field id.
+func GetInt32(buf []byte, offsets *FastIntMap, fieldID int) int32 {
+	offset, ok := offsets.Get(fieldID)
+	if !ok {
+		return 0
+	}
+	x, _ := binary.Uvarint(buf[offset:])
+	return int32(x)
+}
+
+// GetInt64 gets an encoded int64 field with the given field id.
+func GetInt64(buf []byte, offsets *FastIntMap, fieldID int) int64 {
+	offset, ok := offsets.Get(fieldID)
+	if !ok {
+		return 0
+	}
+	x, _ := binary.Uvarint(buf[offset:])
+	return int64(x)
+}
 
 // GetUint32 gets an encoded uint32 field with the given field id.
 func GetUint32(buf []byte, offsets *FastIntMap, fieldID int) uint32 {
@@ -26,7 +59,101 @@ func GetUint64(buf []byte, offsets *FastIntMap, fieldID int) uint64 {
 		return 0
 	}
 	x, _ := binary.Uvarint(buf[offset:])
-	return uint64(x)
+	return x
+}
+
+// GetZigZagInt32 gets a zig-zag encoded int32 field with the given field id.
+func GetZigZagInt32(buf []byte, offsets *FastIntMap, fieldID int) int32 {
+	offset, ok := offsets.Get(fieldID)
+	if !ok {
+		return 0
+	}
+	x, _ := binary.Varint(buf[offset:])
+	return int32(x)
+}
+
+// GetZigZagInt64 gets a zig-zag encoded int64 field with the given field id.
+func GetZigZagInt64(buf []byte, offsets *FastIntMap, fieldID int) int64 {
+	offset, ok := offsets.Get(fieldID)
+	if !ok {
+		return 0
+	}
+	x, _ := binary.Varint(buf[offset:])
+	return x
+}
+
+// GetFixedUint32 gets a little-endian encoded uint32 field with the given field
+// id.
+func GetFixedUint32(buf []byte, offsets *FastIntMap, fieldID int) uint32 {
+	offset, ok := offsets.Get(fieldID)
+	if !ok {
+		return 0
+	}
+	return binary.LittleEndian.Uint32(buf[offset : offset+4])
+}
+
+// GetFixedUint64 gets a little-endian encoded uint64 field with the given field
+// id.
+func GetFixedUint64(buf []byte, offsets *FastIntMap, fieldID int) uint64 {
+	offset, ok := offsets.Get(fieldID)
+	if !ok {
+		return 0
+	}
+	return binary.LittleEndian.Uint64(buf[offset : offset+8])
+}
+
+// GetFixedInt32 gets a little-endian encoded int32 field with the given field
+// id.
+func GetFixedInt32(buf []byte, offsets *FastIntMap, fieldID int) int32 {
+	offset, ok := offsets.Get(fieldID)
+	if !ok {
+		return 0
+	}
+	return int32(binary.LittleEndian.Uint32(buf[offset : offset+4]))
+}
+
+// GetFixedInt64 gets a little-endian encoded int64 field with the given field
+// id.
+func GetFixedInt64(buf []byte, offsets *FastIntMap, fieldID int) int64 {
+	offset, ok := offsets.Get(fieldID)
+	if !ok {
+		return 0
+	}
+	return int64(binary.LittleEndian.Uint64(buf[offset : offset+8]))
+}
+
+// GetFloat32 gets a little-endian, IEEE 754 encoded float32 field with the
+// given field id.
+func GetFloat32(buf []byte, offsets *FastIntMap, fieldID int) float32 {
+	offset, ok := offsets.Get(fieldID)
+	if !ok {
+		return 0
+	}
+	bits := binary.LittleEndian.Uint32(buf[offset : offset+4])
+	return math.Float32frombits(bits)
+}
+
+// GetFloat64 gets a little-endian, IEEE 754 encoded float64 field with the
+// given field id.
+func GetFloat64(buf []byte, offsets *FastIntMap, fieldID int) float64 {
+	offset, ok := offsets.Get(fieldID)
+	if !ok {
+		return 0
+	}
+	bits := binary.LittleEndian.Uint64(buf[offset : offset+8])
+	return math.Float64frombits(bits)
+}
+
+// GetString gets an encoded string field with the given field id.
+func GetString(buf []byte, offsets *FastIntMap, fieldID int) string {
+	offset, ok := offsets.Get(fieldID)
+	if !ok {
+		return ``
+	}
+	len, lenSize := binary.Uvarint(buf[offset:])
+	offset += lenSize
+	data := buf[offset : offset+int(len)]
+	return *(*string)(unsafe.Pointer(&data))
 }
 
 // GetBytes gets an encoded []byte field with the given field id.
@@ -38,6 +165,36 @@ func GetBytes(buf []byte, offsets *FastIntMap, fieldID int) []byte {
 	len, lenSize := binary.Uvarint(buf[offset:])
 	offset += lenSize
 	return buf[offset : offset+int(len)]
+}
+
+// SetBool set an encoded bool field with the given field id, overwriting an
+// old value if present.
+func SetBool(buf *[]byte, offsets *FastIntMap, fieldID int, x bool) {
+	var scratch [1]byte
+	if x {
+		scratch[0] = 1
+	}
+	var valLen, val []byte = nil, scratch[:]
+	setSingle(buf, offsets, fieldID, proto.WireVarint, valLen, val)
+}
+
+// SetInt32 set an encoded int32 field with the given field id, overwriting an
+// old value if present.
+func SetInt32(buf *[]byte, offsets *FastIntMap, fieldID int, x int32) {
+	// WIP huh? var scratch [binary.MaxVarintLen32]byte
+	var scratch [binary.MaxVarintLen64]byte
+	n := binary.PutUvarint(scratch[:], uint64(x))
+	var valLen, val []byte = nil, scratch[:n]
+	setSingle(buf, offsets, fieldID, proto.WireVarint, valLen, val)
+}
+
+// SetInt64 set an encoded int64 field with the given field id, overwriting an
+// old value if present.
+func SetInt64(buf *[]byte, offsets *FastIntMap, fieldID int, x int64) {
+	var scratch [binary.MaxVarintLen64]byte
+	n := binary.PutUvarint(scratch[:], uint64(x))
+	var valLen, val []byte = nil, scratch[:n]
+	setSingle(buf, offsets, fieldID, proto.WireVarint, valLen, val)
 }
 
 // SetUint32 set an encoded uint64 field with the given field id, overwriting an
@@ -56,6 +213,95 @@ func SetUint64(buf *[]byte, offsets *FastIntMap, fieldID int, x uint64) {
 	n := binary.PutUvarint(scratch[:], x)
 	var valLen, val []byte = nil, scratch[:n]
 	setSingle(buf, offsets, fieldID, proto.WireVarint, valLen, val)
+}
+
+// SetZigZagInt32 set a zig-zag encoded int64 field with the given field id,
+// overwriting an old value if present.
+func SetZigZagInt32(buf *[]byte, offsets *FastIntMap, fieldID int, x int32) {
+	var scratch [binary.MaxVarintLen32]byte
+	n := binary.PutVarint(scratch[:], int64(x))
+	var valLen, val []byte = nil, scratch[:n]
+	setSingle(buf, offsets, fieldID, proto.WireVarint, valLen, val)
+}
+
+// SetZigZagInt64 set a zig-zag encoded int64 field with the given field id,
+// overwriting an old value if present.
+func SetZigZagInt64(buf *[]byte, offsets *FastIntMap, fieldID int, x int64) {
+	var scratch [binary.MaxVarintLen64]byte
+	n := binary.PutVarint(scratch[:], x)
+	var valLen, val []byte = nil, scratch[:n]
+	setSingle(buf, offsets, fieldID, proto.WireVarint, valLen, val)
+}
+
+// SetFixedUint32 set a little-endian encoded uint32 field with the given field
+// id, overwriting an old value if present.
+func SetFixedUint32(buf *[]byte, offsets *FastIntMap, fieldID int, x uint32) {
+	var scratch [4]byte
+	binary.LittleEndian.PutUint32(scratch[:], x)
+	var valLen, val []byte = nil, scratch[:]
+	setSingle(buf, offsets, fieldID, proto.WireFixed32, valLen, val)
+}
+
+// SetFixedUint64 set a little-endian encoded uint64 field with the given field
+// id, overwriting an old value if present.
+func SetFixedUint64(buf *[]byte, offsets *FastIntMap, fieldID int, x uint64) {
+	var scratch [8]byte
+	binary.LittleEndian.PutUint64(scratch[:], x)
+	var valLen, val []byte = nil, scratch[:]
+	setSingle(buf, offsets, fieldID, proto.WireFixed64, valLen, val)
+}
+
+// SetFixedInt32 set a little-endian encoded int32 field with the given field
+// id, overwriting an old value if present.
+func SetFixedInt32(buf *[]byte, offsets *FastIntMap, fieldID int, x int32) {
+	var scratch [4]byte
+	binary.LittleEndian.PutUint32(scratch[:], uint32(x))
+	var valLen, val []byte = nil, scratch[:]
+	setSingle(buf, offsets, fieldID, proto.WireFixed32, valLen, val)
+}
+
+// SetFixedInt64 set a little-endian encoded int64 field with the given field
+// id, overwriting an old value if present.
+func SetFixedInt64(buf *[]byte, offsets *FastIntMap, fieldID int, x int64) {
+	var scratch [8]byte
+	binary.LittleEndian.PutUint64(scratch[:], uint64(x))
+	var valLen, val []byte = nil, scratch[:]
+	setSingle(buf, offsets, fieldID, proto.WireFixed64, valLen, val)
+}
+
+// SetFloat32 set a little-endian, IEEE 754 encoded float32 field with the given
+// field id, overwriting an old value if present.
+func SetFloat32(buf *[]byte, offsets *FastIntMap, fieldID int, x float32) {
+	var scratch [4]byte
+	bits := math.Float32bits(x)
+	binary.LittleEndian.PutUint32(scratch[:], bits)
+	var valLen, val []byte = nil, scratch[:]
+	setSingle(buf, offsets, fieldID, proto.WireFixed32, valLen, val)
+}
+
+// SetFloat64 set a little-endian, IEEE 754 encoded float64 field with the given
+// field id, overwriting an old value if present.
+func SetFloat64(buf *[]byte, offsets *FastIntMap, fieldID int, x float64) {
+	var scratch [8]byte
+	bits := math.Float64bits(x)
+	binary.LittleEndian.PutUint64(scratch[:], bits)
+	var valLen, val []byte = nil, scratch[:]
+	setSingle(buf, offsets, fieldID, proto.WireFixed64, valLen, val)
+}
+
+// SetString set an encoded string field with the given field id, overwriting an
+// old value if present.
+func SetString(buf *[]byte, offsets *FastIntMap, fieldID int, x string) {
+	var scratch [binary.MaxVarintLen64]byte
+	hdr := *(*reflect.StringHeader)(unsafe.Pointer(&x))
+	data := *(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
+		Data: hdr.Data,
+		Len:  hdr.Len,
+		Cap:  hdr.Len,
+	}))
+	n := binary.PutUvarint(scratch[:], uint64(len(data)))
+	var valLen, val []byte = scratch[:n], data
+	setSingle(buf, offsets, fieldID, proto.WireBytes, valLen, val)
 }
 
 // SetBytes set an encoded []byte field with the given field id, overwriting an
@@ -145,8 +391,11 @@ func appendSingle(buf *[]byte, offsets *FastIntMap, fieldID, typ int, valLen, va
 	*buf = append(*buf, val...)
 }
 
-// GetRepeatedMessage WIP
-func GetRepeatedMessage(buf []byte, offsets *FastIntMap, fieldID int) []byte {
+// GetRepeatedNonPacked returns a slice of the internal buffer, starting at the
+// first instance of a non-packed repeated field and with everything after it.
+// It's positioned past the tag of the field, so the very first thing will be a
+// varint length. This is exactly the input expected by FindNextField.
+func GetRepeatedNonPacked(buf []byte, offsets *FastIntMap, fieldID int) []byte {
 	offset, ok := offsets.Get(fieldID)
 	if !ok {
 		return nil
@@ -169,6 +418,12 @@ func Decode(buf []byte, offsets *FastIntMap) error {
 			offsets.Set(field, idx)
 			_, size := binary.Uvarint(buf[idx:])
 			idx += size
+		case proto.WireFixed32:
+			offsets.Set(field, idx)
+			idx += 4
+		case proto.WireFixed64:
+			offsets.Set(field, idx)
+			idx += 8
 		case proto.WireBytes:
 			// Set the offset if this is the first one we've found but don't overwrite
 			// an earlier offset. The repeated message iterator will start from this
@@ -207,10 +462,14 @@ func FindNextField(buf []byte, field int) ([]byte, []byte) {
 			return buf[idx:], msg
 		}
 		switch typ {
-		case 0:
+		case proto.WireVarint:
 			_, size := binary.Uvarint(buf[idx:])
 			idx += size
-		case 2:
+		case proto.WireFixed32:
+			idx += 4
+		case proto.WireFixed64:
+			idx += 8
+		case proto.WireBytes:
 			len, lenSize := binary.Uvarint(buf[idx:])
 			idx += lenSize + int(len)
 		default:

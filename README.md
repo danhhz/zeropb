@@ -32,24 +32,50 @@ set of requirements for allocation-less use are as follows:
   offset of the first appearance of each field id in the encoded message. The
   largest of these offsets must be less than 15.
 
-Additional current restrictions which may be addressed:
-- Many field types are not supported: float, double, sint32/sint64,
-  fixed32/fixed64, sfixed32/sfixed64, groups (deprecated).
-- Unknown fields are not preserved.
-- Protobuf enums are treated as `uint32`s.
-- The protobuf spec allows for a non-repeated message to be encoded across
+
+## The Road to v1.0.0
+
+- [x] Support message encoding
+- [x] Support all protobuf field types.
+  - [ ] Also support them for repeated fields.
+- [ ] Generate and use Go types for each protobuf enum. They are currently
+  treated at `uint32`s.
+- [ ] More test coverage.
+- [ ] Fuzz testing.
+- [ ] More benchmark coverage.
+- [ ] Verify that the accessors are all being inlined.
+- [ ] Instead of blindly using FastIntMap for each message, tailor the offsets
+  to the actual field ids in the message. This would allow us to be
+  allocation-free for are larger set of messages with (the common case of) small
+  and dense field ids.
+- [ ] Preserve unknown fields.
+- [ ] Support nested messages.
+- [ ] Support references proto messages from other files/packages.
+- [ ] The protobuf spec allows for a non-repeated message to be encoded across
   multiple field id/value pairs, which must then be merged. Decode returns an
   error for this (I don't understand when this would even happen).
-- The generated structs do not implement the `proto.Message` interface.
-- Extensions are not supported.
-- Nested messages are not supported.
-- Referencing a message defined in another file probably doesn't work.
 
-Additional restrictions that are unlikely to ever be addressed:
+Additional current restrictions which may be addressed:
+- Groups (deprecated) are not supported.
+- Extensions are not supported.
+- The generated structs do not implement the `proto.Message` interface.
 - Repeated fields can only be iterated, not indexed.
 
 
 ## Usage
+
+Install the codegen plugin binary, possibly with go get:
+
+```sh
+> go get -u github.com/danhhz/zeropb/cmd/protoc-gen-zeropb
+```
+
+Then run protoc to get the generated code. (If you have `$GOPATH/bin` in your
+`PATH`, you can omit the --plugin argument.)
+
+```sh
+> protoc --plugin=$GOPATH/bin/protoc-gen-zeropb raft.proto --zeropb_out=.
+```
 
 The following protobuf messages (a subset of the ones defined by the etcd/raft
 library) will generate two Go structs, `Entry` and `Message`.
@@ -103,6 +129,8 @@ func (e *Entry) Index() uint64 { ... }
 func (e *Entry) Type() uint32 { ... }
 func (e *Entry) Data() []byte { ... }
 ```
+
+(See the full current generated [raft.zeropb.go] code for [raft.proto].)
 
 The `Decode` message accepts an encoded message and fills this map of offsets
 and checks the validity of the encoded bytes. As mentioned above, it does not
@@ -211,9 +239,10 @@ slower than other libraries.
 
 The speedup of lazy field decoding is even more pronounced when using one field
 out of a more complex message. In this case, there are byte and message fields
-that are not used but waste cpu and even cause allocations in eager decoding.
+that are not used but waste cpu and cause allocations because of eager decoding.
 Also note that zeropb's message decode cost is roughly proportional to the
-number of top-level fields set in the message.
+number of top-level fields set in the message and independent of any fields in
+sub-messages.
 
     name                                         time/op
     DecodeComplexAccessOne/pb-8                  1.39µs ± 0%
@@ -249,21 +278,8 @@ fields.
     DecodeComplexAccessRepeatedMessage/zeropb-8    0.00
 
 
-## The Road to v1.0.0
-
-- [ ] Support message encoding
-- [ ] Instead of blindly using FastIntMap for each message, tailor the offsets
-  to the actual field ids in the message. This would allow us to be
-  allocation-free for are larger set of messages with (the common case of) small
-  and dense field ids.
-- [ ] Support all protobuf field types.
-- [ ] Generate and use Go types for each protobuf enum.
-- [ ] More test coverage.
-- [ ] Fuzz testing.
-- [ ] More benchmark coverage.
-- [ ] Verify that the accessors are all being inlined.
-
-
 [Protocol Buffer]: https://developers.google.com/protocol-buffers/
 [FlatBuffers]: https://google.github.io/flatbuffers/
 [Cap’n Proto]: https://capnproto.org/
+[raft.zeropb.go]: https://github.com/danhhz/zeropb/blob/master/golden/raftzeropb/raft.zeropb.go
+[raft.proto]: https://github.com/danhhz/zeropb/blob/master/golden/raft.proto
