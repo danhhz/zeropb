@@ -107,10 +107,6 @@ func generateSimpleField(
 ) {
 	fieldGoName := toGoCase(f.GetName())
 	fieldGoType, fieldFnName := fieldToGoTypeSimple(f.GetType())
-	// WIP remove this when all field types are implemented
-	if fieldGoType == `` {
-		return
-	}
 
 	st.Write(indent, "func (m *", messageGoType, ") ", fieldGoName, "() ", fieldGoType, " {\n")
 	st.Write(indent.Next(), "return zeropb.Get", fieldFnName, "(m.buf, &m.offsets, ", f.GetNumber(), ")\n")
@@ -160,7 +156,7 @@ func generateRepeatedMessageField(
 	st.Write(indent, "}\n\n")
 
 	st.Write(indent, "func (m *", messageGoType, ") ", fieldGoName, "() ", itGoType, " {\n")
-	st.Write(indent.Next(), "return ", itGoType, "(zeropb.GetRepeatedMessage(m.buf, &m.offsets, ", f.GetNumber(), "))\n")
+	st.Write(indent.Next(), "return ", itGoType, "(zeropb.GetRepeatedNonPacked(m.buf, &m.offsets, ", f.GetNumber(), "))\n")
 	st.Write(indent, "}\n\n")
 
 	st.Write(indent, "func (m *", messageGoType, ") AppendTo", fieldGoName, "(x ", fieldGoType, ") {\n")
@@ -187,15 +183,40 @@ func toGoCase(s string) string {
 
 func fieldToGoTypeSimple(typ FieldDescriptorProto_Type) (fieldGoType, fieldFnName string) {
 	switch typ {
+	case FieldDescriptorProto_TYPE_BOOL:
+		return `bool`, `Bool`
+	case FieldDescriptorProto_TYPE_INT32:
+		return `int32`, `Int32`
+	case FieldDescriptorProto_TYPE_INT64:
+		return `int64`, `Int64`
+	case FieldDescriptorProto_TYPE_UINT32:
+		return `uint32`, `Uint32`
 	case FieldDescriptorProto_TYPE_UINT64:
 		return `uint64`, `Uint64`
+	case FieldDescriptorProto_TYPE_SINT32:
+		return `int32`, `ZigZagInt32`
+	case FieldDescriptorProto_TYPE_SINT64:
+		return `int64`, `ZigZagInt64`
+	case FieldDescriptorProto_TYPE_FIXED32:
+		return `uint32`, `FixedUint32`
+	case FieldDescriptorProto_TYPE_FIXED64:
+		return `uint64`, `FixedUint64`
+	case FieldDescriptorProto_TYPE_SFIXED32:
+		return `int32`, `FixedInt32`
+	case FieldDescriptorProto_TYPE_SFIXED64:
+		return `int64`, `FixedInt64`
+	case FieldDescriptorProto_TYPE_DOUBLE:
+		return `float64`, `Float64`
+	case FieldDescriptorProto_TYPE_FLOAT:
+		return `float32`, `Float32`
+	case FieldDescriptorProto_TYPE_STRING:
+		return `string`, `String`
 	case FieldDescriptorProto_TYPE_BYTES:
 		return `[]byte`, `Bytes`
 	case FieldDescriptorProto_TYPE_ENUM:
 		return `uint32`, `Uint32`
 	}
-	// WIP implement the rest of these
-	return ``, ``
+	panic(typ)
 }
 
 func fieldToGoTypeMessage(typName string) string {

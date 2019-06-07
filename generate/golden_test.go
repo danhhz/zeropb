@@ -11,7 +11,7 @@ import (
 	"github.com/golang/protobuf/proto"
 )
 
-var rewrite = flag.Bool("rewrite", false, "WIP")
+var rewrite = flag.Bool("rewrite", false, "overwrite goldens with current values")
 
 func testGolden(t *testing.T, inputPath, goldenPath string) {
 	reqBytes, err := ioutil.ReadFile(inputPath)

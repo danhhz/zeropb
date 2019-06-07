@@ -5,6 +5,7 @@ package zeropb_test
 import (
 	"log"
 	"math/rand"
+	"strings"
 	"testing"
 	"time"
 
@@ -14,12 +15,33 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const alphanum = `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789`
+
 func randTestMessage(rng *rand.Rand) *testgogopb.TestMessage {
 	var fn func(depth int) *testgogopb.TestMessage
 	fn = func(depth int) *testgogopb.TestMessage {
 		m := &testgogopb.TestMessage{
-			Uint64: rng.Uint64(),
-			Enum:   testgogopb.TestEnum(rng.Intn(2)),
+			Bool:     rng.Intn(2) == 0,
+			Int32:    int32(rng.Uint32()),
+			Int64:    int64(rng.Uint64()),
+			Uint32:   rng.Uint32(),
+			Uint64:   rng.Uint64(),
+			Sint32:   int32(rng.Uint32()),
+			Sint64:   int64(rng.Uint64()),
+			Fixed32:  rng.Uint32(),
+			Fixed64:  rng.Uint64(),
+			Sfixed32: int32(rng.Uint32()),
+			Sfixed64: int64(rng.Uint64()),
+			Float:    rng.Float32(),
+			Double:   rng.Float64(),
+			Enum:     testgogopb.TestEnum(rng.Intn(2)),
+		}
+		if l := rng.Intn(10); l > 0 {
+			var buf strings.Builder
+			for i := 0; i < l; i++ {
+				buf.WriteByte(alphanum[rng.Intn(len(alphanum))])
+			}
+			m.String_ = buf.String()
 		}
 		if l := rng.Intn(10); l > 0 {
 			m.ByteArray = make([]byte, l)
@@ -64,7 +86,20 @@ func zeroToGogoViaBytes(zero testzeropb.TestMessage) *testgogopb.TestMessage {
 
 func gogoToZeroViaCopy(gogo *testgogopb.TestMessage) testzeropb.TestMessage {
 	var zero testzeropb.TestMessage
+	zero.SetBool(gogo.Bool)
+	zero.SetInt32(gogo.Int32)
+	zero.SetInt64(gogo.Int64)
+	zero.SetUint32(gogo.Uint32)
 	zero.SetUint64(gogo.Uint64)
+	zero.SetSint32(gogo.Sint32)
+	zero.SetSint64(gogo.Sint64)
+	zero.SetFixed32(gogo.Fixed32)
+	zero.SetFixed64(gogo.Fixed64)
+	zero.SetSfixed32(gogo.Sfixed32)
+	zero.SetSfixed64(gogo.Sfixed64)
+	zero.SetFloat(gogo.Float)
+	zero.SetDouble(gogo.Double)
+	zero.SetString(gogo.String_)
 	zero.SetEnum(uint32(gogo.Enum))
 	if x := gogo.ByteArray; len(x) > 0 {
 		zero.SetByteArray(gogo.ByteArray)
@@ -82,7 +117,20 @@ func gogoToZeroViaCopy(gogo *testgogopb.TestMessage) testzeropb.TestMessage {
 
 func zeroToGogoViaCopy(zero testzeropb.TestMessage) *testgogopb.TestMessage {
 	gogo := &testgogopb.TestMessage{
+		Bool:      zero.Bool(),
+		Int32:     zero.Int32(),
+		Int64:     zero.Int64(),
+		Uint32:    zero.Uint32(),
 		Uint64:    zero.Uint64(),
+		Sint32:    zero.Sint32(),
+		Sint64:    zero.Sint64(),
+		Fixed32:   zero.Fixed32(),
+		Fixed64:   zero.Fixed64(),
+		Sfixed32:  zero.Sfixed32(),
+		Sfixed64:  zero.Sfixed64(),
+		Double:    zero.Double(),
+		Float:     zero.Float(),
+		String_:   zero.String(),
 		ByteArray: zero.ByteArray(),
 		Enum:      testgogopb.TestEnum(zero.Enum()),
 	}

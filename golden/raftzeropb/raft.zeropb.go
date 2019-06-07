@@ -234,7 +234,7 @@ func (i *MessageEntryIterator) Next(m *Entry) (bool, error) {
 }
 
 func (m *Message) Entries() MessageEntryIterator {
-  return MessageEntryIterator(zeropb.GetRepeatedMessage(m.buf, &m.offsets, 7))
+  return MessageEntryIterator(zeropb.GetRepeatedNonPacked(m.buf, &m.offsets, 7))
 }
 
 func (m *Message) AppendToEntries(x Entry) {
@@ -261,6 +261,14 @@ func (m *Message) Snapshot(x *Snapshot) (bool, error) {
 func (m *Message) SetSnapshot(x Snapshot) {
   buf := x.Encode()
   zeropb.SetBytes(&m.buf, &m.offsets, 9, buf)
+}
+
+func (m *Message) Reject() bool {
+  return zeropb.GetBool(m.buf, &m.offsets, 10)
+}
+
+func (m *Message) SetReject(x bool) {
+  zeropb.SetBool(&m.buf, &m.offsets, 10, x)
 }
 
 func (m *Message) RejectHint() uint64 {
