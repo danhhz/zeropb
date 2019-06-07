@@ -1,0 +1,2062 @@
+file_to_generate: "test.proto"
+proto_file: <
+  name: "test.proto"
+  package: "testzeropb"
+  message_type: <
+    name: "TestMessage"
+    field: <
+      name: "bool"
+      number: 1
+      label: LABEL_OPTIONAL
+      type: TYPE_BOOL
+      json_name: "bool"
+    >
+    field: <
+      name: "int32"
+      number: 2
+      label: LABEL_OPTIONAL
+      type: TYPE_INT32
+      json_name: "int32"
+    >
+    field: <
+      name: "int64"
+      number: 3
+      label: LABEL_OPTIONAL
+      type: TYPE_INT64
+      json_name: "int64"
+    >
+    field: <
+      name: "uint32"
+      number: 4
+      label: LABEL_OPTIONAL
+      type: TYPE_UINT32
+      json_name: "uint32"
+    >
+    field: <
+      name: "uint64"
+      number: 5
+      label: LABEL_OPTIONAL
+      type: TYPE_UINT64
+      json_name: "uint64"
+    >
+    field: <
+      name: "sint32"
+      number: 6
+      label: LABEL_OPTIONAL
+      type: TYPE_SINT32
+      json_name: "sint32"
+    >
+    field: <
+      name: "sint64"
+      number: 7
+      label: LABEL_OPTIONAL
+      type: TYPE_SINT64
+      json_name: "sint64"
+    >
+    field: <
+      name: "fixed32"
+      number: 8
+      label: LABEL_OPTIONAL
+      type: TYPE_FIXED32
+      json_name: "fixed32"
+    >
+    field: <
+      name: "fixed64"
+      number: 9
+      label: LABEL_OPTIONAL
+      type: TYPE_FIXED64
+      json_name: "fixed64"
+    >
+    field: <
+      name: "sfixed32"
+      number: 10
+      label: LABEL_OPTIONAL
+      type: TYPE_SFIXED32
+      json_name: "sfixed32"
+    >
+    field: <
+      name: "sfixed64"
+      number: 11
+      label: LABEL_OPTIONAL
+      type: TYPE_SFIXED64
+      json_name: "sfixed64"
+    >
+    field: <
+      name: "double"
+      number: 12
+      label: LABEL_OPTIONAL
+      type: TYPE_DOUBLE
+      json_name: "double"
+    >
+    field: <
+      name: "float"
+      number: 13
+      label: LABEL_OPTIONAL
+      type: TYPE_FLOAT
+      json_name: "float"
+    >
+    field: <
+      name: "string"
+      number: 14
+      label: LABEL_OPTIONAL
+      type: TYPE_STRING
+      json_name: "string"
+    >
+    field: <
+      name: "byte_array"
+      number: 15
+      label: LABEL_OPTIONAL
+      type: TYPE_BYTES
+      json_name: "byteArray"
+    >
+    field: <
+      name: "enum"
+      number: 16
+      label: LABEL_OPTIONAL
+      type: TYPE_ENUM
+      type_name: ".testzeropb.TestEnum"
+      json_name: "enum"
+    >
+    field: <
+      name: "message"
+      number: 17
+      label: LABEL_OPTIONAL
+      type: TYPE_MESSAGE
+      type_name: ".testzeropb.TestMessage"
+      json_name: "message"
+    >
+    field: <
+      name: "bools"
+      number: 18
+      label: LABEL_REPEATED
+      type: TYPE_BOOL
+      json_name: "bools"
+    >
+    field: <
+      name: "int32s"
+      number: 19
+      label: LABEL_REPEATED
+      type: TYPE_INT32
+      json_name: "int32s"
+    >
+    field: <
+      name: "int64s"
+      number: 20
+      label: LABEL_REPEATED
+      type: TYPE_INT64
+      json_name: "int64s"
+    >
+    field: <
+      name: "uint32s"
+      number: 21
+      label: LABEL_REPEATED
+      type: TYPE_UINT32
+      json_name: "uint32s"
+    >
+    field: <
+      name: "uint64s"
+      number: 22
+      label: LABEL_REPEATED
+      type: TYPE_UINT64
+      json_name: "uint64s"
+    >
+    field: <
+      name: "sint32s"
+      number: 23
+      label: LABEL_REPEATED
+      type: TYPE_SINT32
+      json_name: "sint32s"
+    >
+    field: <
+      name: "sint64s"
+      number: 24
+      label: LABEL_REPEATED
+      type: TYPE_SINT64
+      json_name: "sint64s"
+    >
+    field: <
+      name: "fixed32s"
+      number: 25
+      label: LABEL_REPEATED
+      type: TYPE_FIXED32
+      json_name: "fixed32s"
+    >
+    field: <
+      name: "fixed64s"
+      number: 26
+      label: LABEL_REPEATED
+      type: TYPE_FIXED64
+      json_name: "fixed64s"
+    >
+    field: <
+      name: "sfixed32s"
+      number: 27
+      label: LABEL_REPEATED
+      type: TYPE_SFIXED32
+      json_name: "sfixed32s"
+    >
+    field: <
+      name: "sfixed64s"
+      number: 28
+      label: LABEL_REPEATED
+      type: TYPE_SFIXED64
+      json_name: "sfixed64s"
+    >
+    field: <
+      name: "doubles"
+      number: 29
+      label: LABEL_REPEATED
+      type: TYPE_DOUBLE
+      json_name: "doubles"
+    >
+    field: <
+      name: "floats"
+      number: 30
+      label: LABEL_REPEATED
+      type: TYPE_FLOAT
+      json_name: "floats"
+    >
+    field: <
+      name: "strings"
+      number: 31
+      label: LABEL_REPEATED
+      type: TYPE_STRING
+      json_name: "strings"
+    >
+    field: <
+      name: "byte_arrays"
+      number: 32
+      label: LABEL_REPEATED
+      type: TYPE_BYTES
+      json_name: "byteArrays"
+    >
+    field: <
+      name: "enums"
+      number: 33
+      label: LABEL_REPEATED
+      type: TYPE_ENUM
+      type_name: ".testzeropb.TestEnum"
+      json_name: "enums"
+    >
+    field: <
+      name: "messages"
+      number: 34
+      label: LABEL_REPEATED
+      type: TYPE_MESSAGE
+      type_name: ".testzeropb.TestMessage"
+      json_name: "messages"
+    >
+  >
+  enum_type: <
+    name: "TestEnum"
+    value: <
+      name: "ZERO"
+      number: 0
+    >
+    value: <
+      name: "ONE"
+      number: 1
+    >
+  >
+  source_code_info: <
+    location: <
+      span: 2
+      span: 0
+      span: 56
+      span: 1
+    >
+    location: <
+      path: 12
+      span: 2
+      span: 0
+      span: 18
+      leading_detached_comments: " Copyright 2019 Daniel Harrison. All Rights Reserved.\n"
+    >
+    location: <
+      path: 2
+      span: 3
+      span: 0
+      span: 19
+    >
+    location: <
+      path: 5
+      path: 0
+      span: 5
+      span: 0
+      span: 8
+      span: 1
+    >
+    location: <
+      path: 5
+      path: 0
+      path: 1
+      span: 5
+      span: 5
+      span: 13
+    >
+    location: <
+      path: 5
+      path: 0
+      path: 2
+      path: 0
+      span: 6
+      span: 2
+      span: 11
+    >
+    location: <
+      path: 5
+      path: 0
+      path: 2
+      path: 0
+      path: 1
+      span: 6
+      span: 2
+      span: 6
+    >
+    location: <
+      path: 5
+      path: 0
+      path: 2
+      path: 0
+      path: 2
+      span: 6
+      span: 9
+      span: 10
+    >
+    location: <
+      path: 5
+      path: 0
+      path: 2
+      path: 1
+      span: 7
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 5
+      path: 0
+      path: 2
+      path: 1
+      path: 1
+      span: 7
+      span: 2
+      span: 5
+    >
+    location: <
+      path: 5
+      path: 0
+      path: 2
+      path: 1
+      path: 2
+      span: 7
+      span: 8
+      span: 9
+    >
+    location: <
+      path: 4
+      path: 0
+      span: 10
+      span: 0
+      span: 56
+      span: 1
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 1
+      span: 10
+      span: 8
+      span: 19
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 0
+      span: 11
+      span: 2
+      span: 16
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 0
+      path: 4
+      span: 11
+      span: 2
+      span: 10
+      span: 21
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 0
+      path: 5
+      span: 11
+      span: 2
+      span: 6
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 0
+      path: 1
+      span: 11
+      span: 7
+      span: 11
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 0
+      path: 3
+      span: 11
+      span: 14
+      span: 15
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 1
+      span: 13
+      span: 2
+      span: 18
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 1
+      path: 4
+      span: 13
+      span: 2
+      span: 11
+      span: 16
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 1
+      path: 5
+      span: 13
+      span: 2
+      span: 7
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 1
+      path: 1
+      span: 13
+      span: 8
+      span: 13
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 1
+      path: 3
+      span: 13
+      span: 16
+      span: 17
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 2
+      span: 14
+      span: 2
+      span: 18
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 2
+      path: 4
+      span: 14
+      span: 2
+      span: 13
+      span: 18
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 2
+      path: 5
+      span: 14
+      span: 2
+      span: 7
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 2
+      path: 1
+      span: 14
+      span: 8
+      span: 13
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 2
+      path: 3
+      span: 14
+      span: 16
+      span: 17
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 3
+      span: 15
+      span: 2
+      span: 20
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 3
+      path: 4
+      span: 15
+      span: 2
+      span: 14
+      span: 18
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 3
+      path: 5
+      span: 15
+      span: 2
+      span: 8
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 3
+      path: 1
+      span: 15
+      span: 9
+      span: 15
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 3
+      path: 3
+      span: 15
+      span: 18
+      span: 19
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 4
+      span: 16
+      span: 2
+      span: 20
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 4
+      path: 4
+      span: 16
+      span: 2
+      span: 15
+      span: 20
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 4
+      path: 5
+      span: 16
+      span: 2
+      span: 8
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 4
+      path: 1
+      span: 16
+      span: 9
+      span: 15
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 4
+      path: 3
+      span: 16
+      span: 18
+      span: 19
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 5
+      span: 17
+      span: 2
+      span: 20
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 5
+      path: 4
+      span: 17
+      span: 2
+      span: 16
+      span: 20
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 5
+      path: 5
+      span: 17
+      span: 2
+      span: 8
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 5
+      path: 1
+      span: 17
+      span: 9
+      span: 15
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 5
+      path: 3
+      span: 17
+      span: 18
+      span: 19
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 6
+      span: 18
+      span: 2
+      span: 20
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 6
+      path: 4
+      span: 18
+      span: 2
+      span: 17
+      span: 20
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 6
+      path: 5
+      span: 18
+      span: 2
+      span: 8
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 6
+      path: 1
+      span: 18
+      span: 9
+      span: 15
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 6
+      path: 3
+      span: 18
+      span: 18
+      span: 19
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 7
+      span: 20
+      span: 2
+      span: 22
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 7
+      path: 4
+      span: 20
+      span: 2
+      span: 18
+      span: 20
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 7
+      path: 5
+      span: 20
+      span: 2
+      span: 9
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 7
+      path: 1
+      span: 20
+      span: 10
+      span: 17
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 7
+      path: 3
+      span: 20
+      span: 20
+      span: 21
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 8
+      span: 21
+      span: 2
+      span: 22
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 8
+      path: 4
+      span: 21
+      span: 2
+      span: 20
+      span: 22
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 8
+      path: 5
+      span: 21
+      span: 2
+      span: 9
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 8
+      path: 1
+      span: 21
+      span: 10
+      span: 17
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 8
+      path: 3
+      span: 21
+      span: 20
+      span: 21
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 9
+      span: 22
+      span: 2
+      span: 25
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 9
+      path: 4
+      span: 22
+      span: 2
+      span: 21
+      span: 22
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 9
+      path: 5
+      span: 22
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 9
+      path: 1
+      span: 22
+      span: 11
+      span: 19
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 9
+      path: 3
+      span: 22
+      span: 22
+      span: 24
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 10
+      span: 23
+      span: 2
+      span: 25
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 10
+      path: 4
+      span: 23
+      span: 2
+      span: 22
+      span: 25
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 10
+      path: 5
+      span: 23
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 10
+      path: 1
+      span: 23
+      span: 11
+      span: 19
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 10
+      path: 3
+      span: 23
+      span: 22
+      span: 24
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 11
+      span: 25
+      span: 2
+      span: 21
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 11
+      path: 4
+      span: 25
+      span: 2
+      span: 23
+      span: 25
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 11
+      path: 5
+      span: 25
+      span: 2
+      span: 8
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 11
+      path: 1
+      span: 25
+      span: 9
+      span: 15
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 11
+      path: 3
+      span: 25
+      span: 18
+      span: 20
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 12
+      span: 26
+      span: 2
+      span: 19
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 12
+      path: 4
+      span: 26
+      span: 2
+      span: 25
+      span: 21
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 12
+      path: 5
+      span: 26
+      span: 2
+      span: 7
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 12
+      path: 1
+      span: 26
+      span: 8
+      span: 13
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 12
+      path: 3
+      span: 26
+      span: 16
+      span: 18
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 13
+      span: 28
+      span: 2
+      span: 21
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 13
+      path: 4
+      span: 28
+      span: 2
+      span: 26
+      span: 19
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 13
+      path: 5
+      span: 28
+      span: 2
+      span: 8
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 13
+      path: 1
+      span: 28
+      span: 9
+      span: 15
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 13
+      path: 3
+      span: 28
+      span: 18
+      span: 20
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 14
+      span: 29
+      span: 2
+      span: 24
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 14
+      path: 4
+      span: 29
+      span: 2
+      span: 28
+      span: 21
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 14
+      path: 5
+      span: 29
+      span: 2
+      span: 7
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 14
+      path: 1
+      span: 29
+      span: 8
+      span: 18
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 14
+      path: 3
+      span: 29
+      span: 21
+      span: 23
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 15
+      span: 31
+      span: 2
+      span: 21
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 15
+      path: 4
+      span: 31
+      span: 2
+      span: 29
+      span: 24
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 15
+      path: 6
+      span: 31
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 15
+      path: 1
+      span: 31
+      span: 11
+      span: 15
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 15
+      path: 3
+      span: 31
+      span: 18
+      span: 20
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 16
+      span: 32
+      span: 2
+      span: 27
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 16
+      path: 4
+      span: 32
+      span: 2
+      span: 31
+      span: 21
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 16
+      path: 6
+      span: 32
+      span: 2
+      span: 13
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 16
+      path: 1
+      span: 32
+      span: 14
+      span: 21
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 16
+      path: 3
+      span: 32
+      span: 24
+      span: 26
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 17
+      span: 34
+      span: 2
+      span: 27
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 17
+      path: 4
+      span: 34
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 17
+      path: 5
+      span: 34
+      span: 11
+      span: 15
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 17
+      path: 1
+      span: 34
+      span: 16
+      span: 21
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 17
+      path: 3
+      span: 34
+      span: 24
+      span: 26
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 18
+      span: 36
+      span: 2
+      span: 29
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 18
+      path: 4
+      span: 36
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 18
+      path: 5
+      span: 36
+      span: 11
+      span: 16
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 18
+      path: 1
+      span: 36
+      span: 17
+      span: 23
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 18
+      path: 3
+      span: 36
+      span: 26
+      span: 28
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 19
+      span: 37
+      span: 2
+      span: 29
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 19
+      path: 4
+      span: 37
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 19
+      path: 5
+      span: 37
+      span: 11
+      span: 16
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 19
+      path: 1
+      span: 37
+      span: 17
+      span: 23
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 19
+      path: 3
+      span: 37
+      span: 26
+      span: 28
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 20
+      span: 38
+      span: 2
+      span: 31
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 20
+      path: 4
+      span: 38
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 20
+      path: 5
+      span: 38
+      span: 11
+      span: 17
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 20
+      path: 1
+      span: 38
+      span: 18
+      span: 25
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 20
+      path: 3
+      span: 38
+      span: 28
+      span: 30
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 21
+      span: 39
+      span: 2
+      span: 31
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 21
+      path: 4
+      span: 39
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 21
+      path: 5
+      span: 39
+      span: 11
+      span: 17
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 21
+      path: 1
+      span: 39
+      span: 18
+      span: 25
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 21
+      path: 3
+      span: 39
+      span: 28
+      span: 30
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 22
+      span: 40
+      span: 2
+      span: 31
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 22
+      path: 4
+      span: 40
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 22
+      path: 5
+      span: 40
+      span: 11
+      span: 17
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 22
+      path: 1
+      span: 40
+      span: 18
+      span: 25
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 22
+      path: 3
+      span: 40
+      span: 28
+      span: 30
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 23
+      span: 41
+      span: 2
+      span: 31
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 23
+      path: 4
+      span: 41
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 23
+      path: 5
+      span: 41
+      span: 11
+      span: 17
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 23
+      path: 1
+      span: 41
+      span: 18
+      span: 25
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 23
+      path: 3
+      span: 41
+      span: 28
+      span: 30
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 24
+      span: 43
+      span: 2
+      span: 33
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 24
+      path: 4
+      span: 43
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 24
+      path: 5
+      span: 43
+      span: 11
+      span: 18
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 24
+      path: 1
+      span: 43
+      span: 19
+      span: 27
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 24
+      path: 3
+      span: 43
+      span: 30
+      span: 32
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 25
+      span: 44
+      span: 2
+      span: 33
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 25
+      path: 4
+      span: 44
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 25
+      path: 5
+      span: 44
+      span: 11
+      span: 18
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 25
+      path: 1
+      span: 44
+      span: 19
+      span: 27
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 25
+      path: 3
+      span: 44
+      span: 30
+      span: 32
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 26
+      span: 45
+      span: 2
+      span: 35
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 26
+      path: 4
+      span: 45
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 26
+      path: 5
+      span: 45
+      span: 11
+      span: 19
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 26
+      path: 1
+      span: 45
+      span: 20
+      span: 29
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 26
+      path: 3
+      span: 45
+      span: 32
+      span: 34
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 27
+      span: 46
+      span: 2
+      span: 35
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 27
+      path: 4
+      span: 46
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 27
+      path: 5
+      span: 46
+      span: 11
+      span: 19
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 27
+      path: 1
+      span: 46
+      span: 20
+      span: 29
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 27
+      path: 3
+      span: 46
+      span: 32
+      span: 34
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 28
+      span: 48
+      span: 2
+      span: 31
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 28
+      path: 4
+      span: 48
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 28
+      path: 5
+      span: 48
+      span: 11
+      span: 17
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 28
+      path: 1
+      span: 48
+      span: 18
+      span: 25
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 28
+      path: 3
+      span: 48
+      span: 28
+      span: 30
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 29
+      span: 49
+      span: 2
+      span: 29
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 29
+      path: 4
+      span: 49
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 29
+      path: 5
+      span: 49
+      span: 11
+      span: 16
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 29
+      path: 1
+      span: 49
+      span: 17
+      span: 23
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 29
+      path: 3
+      span: 49
+      span: 26
+      span: 28
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 30
+      span: 51
+      span: 2
+      span: 31
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 30
+      path: 4
+      span: 51
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 30
+      path: 5
+      span: 51
+      span: 11
+      span: 17
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 30
+      path: 1
+      span: 51
+      span: 18
+      span: 25
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 30
+      path: 3
+      span: 51
+      span: 28
+      span: 30
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 31
+      span: 52
+      span: 2
+      span: 34
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 31
+      path: 4
+      span: 52
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 31
+      path: 5
+      span: 52
+      span: 11
+      span: 16
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 31
+      path: 1
+      span: 52
+      span: 17
+      span: 28
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 31
+      path: 3
+      span: 52
+      span: 31
+      span: 33
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 32
+      span: 54
+      span: 2
+      span: 31
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 32
+      path: 4
+      span: 54
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 32
+      path: 6
+      span: 54
+      span: 11
+      span: 19
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 32
+      path: 1
+      span: 54
+      span: 20
+      span: 25
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 32
+      path: 3
+      span: 54
+      span: 28
+      span: 30
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 33
+      span: 55
+      span: 2
+      span: 37
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 33
+      path: 4
+      span: 55
+      span: 2
+      span: 10
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 33
+      path: 6
+      span: 55
+      span: 11
+      span: 22
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 33
+      path: 1
+      span: 55
+      span: 23
+      span: 31
+    >
+    location: <
+      path: 4
+      path: 0
+      path: 2
+      path: 33
+      path: 3
+      span: 55
+      span: 34
+      span: 36
+    >
+  >
+  syntax: "proto3"
+>
+compiler_version: <
+  major: 3
+  minor: 7
+  patch: 1
+  suffix: ""
+>

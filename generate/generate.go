@@ -78,11 +78,11 @@ func generateFile(req *FileDescriptorProto) (*CodeGeneratorResponse_File, error)
 					st.Write(indent.Next(), "return true, m.Decode(buf)\n")
 					st.Write(indent, "}\n\n")
 
-					st.Write(indent, "func (m *Message) ", fieldName, "() ", itName, " {\n")
+					st.Write(indent, "func (m *", m.GetName(), ") ", fieldName, "() ", itName, " {\n")
 					st.Write(indent.Next(), "return ", itName, "(zeropb.GetRepeatedMessage(m.buf, &m.offsets, ", f.GetNumber(), "))\n")
 					st.Write(indent, "}\n\n")
 				} else {
-					st.Write(indent, "func (m *Message) ", fieldName, "(x *", fieldType, ") (bool, error) {\n")
+					st.Write(indent, "func (m *", m.GetName(), ") ", fieldName, "(x *", fieldType, ") (bool, error) {\n")
 					st.Write(indent.Next(), "buf := zeropb.GetBytes(m.buf, &m.offsets, ", f.GetNumber(), ")\n")
 					st.Write(indent.Next(), "if buf == nil {\n")
 					st.Write(indent.Next().Next(), "return false, nil\n")
@@ -91,6 +91,10 @@ func generateFile(req *FileDescriptorProto) (*CodeGeneratorResponse_File, error)
 					st.Write(indent, "}\n\n")
 				}
 			} else {
+				if f.GetLabel() == FieldDescriptorProto_LABEL_REPEATED {
+					// WIP
+					continue
+				}
 				fieldType, fieldFnName := toGoType(f.GetType(), f.GetTypeName())
 				if fieldType == `` {
 					// WIP remove this when all field types are implemented

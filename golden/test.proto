@@ -1,0 +1,57 @@
+// Copyright 2019 Daniel Harrison. All Rights Reserved.
+
+syntax = "proto3";
+package testzeropb;
+
+enum TestEnum {
+  ZERO = 0;
+  ONE = 1;
+}
+
+message TestMessage {
+  bool bool = 1;
+
+  int32 int32 = 2;
+  int64 int64 = 3;
+  uint32 uint32 = 4;
+  uint64 uint64 = 5;
+  sint32 sint32 = 6;
+  sint64 sint64 = 7;
+
+  fixed32 fixed32 = 8;
+  fixed64 fixed64 = 9;
+  sfixed32 sfixed32 = 10;
+  sfixed64 sfixed64 = 11;
+
+  double double = 12;
+  float float = 13;
+
+  string string = 14;
+  bytes byte_array = 15;
+
+  TestEnum enum = 16;
+  TestMessage message = 17;
+
+  repeated bool bools = 18;
+
+  repeated int32 int32s = 19;
+  repeated int64 int64s = 20;
+  repeated uint32 uint32s = 21;
+  repeated uint64 uint64s = 22;
+  repeated sint32 sint32s = 23;
+  repeated sint64 sint64s = 24;
+
+  repeated fixed32 fixed32s = 25;
+  repeated fixed64 fixed64s = 26;
+  repeated sfixed32 sfixed32s = 27;
+  repeated sfixed64 sfixed64s = 28;
+
+  repeated double doubles = 29;
+  repeated float floats = 30;
+
+  repeated string strings = 31;
+  repeated bytes byte_arrays = 32;
+
+  repeated TestEnum enums = 33;
+  repeated TestMessage messages = 34;
+}

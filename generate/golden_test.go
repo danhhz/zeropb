@@ -13,13 +13,12 @@ import (
 
 var rewrite = flag.Bool("rewrite", false, "WIP")
 
-func TestGolden(t *testing.T) {
-	goldenDir := filepath.Join(`..`, `golden`)
-	reqBytes, err := ioutil.ReadFile(filepath.Join(goldenDir, `raft.parsed`))
+func testGolden(t *testing.T, inputPath, goldenPath string) {
+	reqBytes, err := ioutil.ReadFile(inputPath)
 	if err != nil {
 		t.Fatal(err)
 	}
-	goldenPath := filepath.Join(goldenDir, `raftzeropb`, `raft.zeropb.go`)
+
 	golden, err := ioutil.ReadFile(goldenPath)
 	if err != nil {
 		t.Fatal(err)
@@ -40,7 +39,7 @@ func TestGolden(t *testing.T) {
 		t.Fatal("expected exactly 1 output file")
 	}
 	file := *res.File[0]
-	if name, expected := file.GetName(), `raft.zeropb.go`; name != expected {
+	if name, expected := file.GetName(), filepath.Base(goldenPath); name != expected {
 		t.Fatalf("expected name to be %s got %s", expected, name)
 	}
 	if content := file.GetContent(); content != string(golden) {
@@ -49,4 +48,18 @@ func TestGolden(t *testing.T) {
 		}
 		t.Fatalf("did not match golden:\n\n%s\n\ngot:\n\n%s\n", golden, content)
 	}
+}
+
+func TestGolden(t *testing.T) {
+	goldenDir := filepath.Join(`..`, `golden`)
+	t.Run(`raft`, func(t *testing.T) {
+		inputPath := filepath.Join(goldenDir, `raft.parsed`)
+		goldenPath := filepath.Join(goldenDir, `raftzeropb`, `raft.zeropb.go`)
+		testGolden(t, inputPath, goldenPath)
+	})
+	t.Run(`test`, func(t *testing.T) {
+		inputPath := filepath.Join(goldenDir, `test.parsed`)
+		goldenPath := filepath.Join(goldenDir, `testzeropb`, `test.zeropb.go`)
+		testGolden(t, inputPath, goldenPath)
+	})
 }
