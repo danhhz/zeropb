@@ -41,7 +41,9 @@ func (m FastIntMap) Empty() bool {
 }
 
 // Clear removes all entries from the map.
-func (m FastIntMap) Clear() {
+//
+// TODO(dan): This needs tests.
+func (m *FastIntMap) Clear() {
 	for i := 0; i < numWords; i++ {
 		m.small[i] = 0
 	}
