@@ -27,7 +27,7 @@ func randTestMessage(rng *rand.Rand) *testgogopb.TestMessage {
 				m.ByteArray[i] = byte(rng.Intn(256))
 			}
 		}
-		if rng.Intn(10) == 0 {
+		if rng.Intn(10) == 0 && depth < 3 {
 			m.Message = fn(depth + 1)
 		}
 		if l := rng.Intn(5); l > 0 && depth < 3 {
@@ -53,8 +53,35 @@ func gogoToZeroViaBytes(gogo *testgogopb.TestMessage) testzeropb.TestMessage {
 	return zero
 }
 
+func zeroToGogoViaBytes(zero testzeropb.TestMessage) *testgogopb.TestMessage {
+	var gogo testgogopb.TestMessage
+	buf := zero.Encode()
+	if err := proto.Unmarshal(buf, &gogo); err != nil {
+		panic(err)
+	}
+	return &gogo
+}
+
+func gogoToZeroViaCopy(gogo *testgogopb.TestMessage) testzeropb.TestMessage {
+	var zero testzeropb.TestMessage
+	zero.SetUint64(gogo.Uint64)
+	zero.SetEnum(uint32(gogo.Enum))
+	if x := gogo.ByteArray; len(x) > 0 {
+		zero.SetByteArray(gogo.ByteArray)
+	}
+	if gogo.Message != nil {
+		sub := gogoToZeroViaCopy(gogo.Message)
+		zero.SetMessage(sub)
+	}
+	for _, m := range gogo.Messages {
+		sub := gogoToZeroViaCopy(m)
+		zero.AppendToMessages(sub)
+	}
+	return zero
+}
+
 func zeroToGogoViaCopy(zero testzeropb.TestMessage) *testgogopb.TestMessage {
-	m := &testgogopb.TestMessage{
+	gogo := &testgogopb.TestMessage{
 		Uint64:    zero.Uint64(),
 		ByteArray: zero.ByteArray(),
 		Enum:      testgogopb.TestEnum(zero.Enum()),
@@ -63,7 +90,7 @@ func zeroToGogoViaCopy(zero testzeropb.TestMessage) *testgogopb.TestMessage {
 	if ok, err := zero.Message(&sub); err != nil {
 		panic(err)
 	} else if ok {
-		m.Message = zeroToGogoViaCopy(sub)
+		gogo.Message = zeroToGogoViaCopy(sub)
 	}
 	for it := zero.Messages(); ; {
 		if ok, err := it.Next(&sub); err != nil {
@@ -71,12 +98,12 @@ func zeroToGogoViaCopy(zero testzeropb.TestMessage) *testgogopb.TestMessage {
 		} else if !ok {
 			break
 		}
-		m.Messages = append(m.Messages, zeroToGogoViaCopy(sub))
+		gogo.Messages = append(gogo.Messages, zeroToGogoViaCopy(sub))
 	}
-	return m
+	return gogo
 }
 
-func TestRandRoundtrip(t *testing.T) {
+func TestRandDecode(t *testing.T) {
 	seed := time.Now().UnixNano()
 	log.Printf("seed=%d", seed)
 	rng := rand.New(rand.NewSource(seed))
@@ -84,5 +111,16 @@ func TestRandRoundtrip(t *testing.T) {
 	gogo := randTestMessage(rng)
 	zero := gogoToZeroViaBytes(gogo)
 	roundtripped := zeroToGogoViaCopy(zero)
+	require.Equal(t, gogo, roundtripped)
+}
+
+func TestRandEncode(t *testing.T) {
+	seed := time.Now().UnixNano()
+	log.Printf("seed=%d", seed)
+	rng := rand.New(rand.NewSource(seed))
+
+	gogo := randTestMessage(rng)
+	zero := gogoToZeroViaCopy(gogo)
+	roundtripped := zeroToGogoViaBytes(zero)
 	require.Equal(t, gogo, roundtripped)
 }

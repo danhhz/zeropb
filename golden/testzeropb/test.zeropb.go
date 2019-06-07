@@ -9,21 +9,45 @@ type TestMessage struct {
   offsets zeropb.FastIntMap
 }
 
-func (m *TestMessage) Decode(buf []byte) error{
+func (m *TestMessage) Encode() []byte {
+  return m.buf
+}
+
+func (m *TestMessage) Decode(buf []byte) error {
   m.buf = buf
   return zeropb.Decode(m.buf, &m.offsets)
+}
+
+func (m *TestMessage) Reset(buf []byte) {
+  if len(buf) > 0 {
+    panic(`buf must be empty`)
+  }
+  m.buf = buf
+  m.offsets.Clear()
 }
 
 func (m *TestMessage) Uint64() uint64 {
   return zeropb.GetUint64(m.buf, &m.offsets, 5)
 }
 
+func (m *TestMessage) SetUint64(x uint64) {
+  zeropb.SetUint64(&m.buf, &m.offsets, 5, x)
+}
+
 func (m *TestMessage) ByteArray() []byte {
   return zeropb.GetBytes(m.buf, &m.offsets, 15)
 }
 
+func (m *TestMessage) SetByteArray(x []byte) {
+  zeropb.SetBytes(&m.buf, &m.offsets, 15, x)
+}
+
 func (m *TestMessage) Enum() uint32 {
   return zeropb.GetUint32(m.buf, &m.offsets, 16)
+}
+
+func (m *TestMessage) SetEnum(x uint32) {
+  zeropb.SetUint32(&m.buf, &m.offsets, 16, x)
 }
 
 func (m *TestMessage) Message(x *TestMessage) (bool, error) {
@@ -32,6 +56,11 @@ func (m *TestMessage) Message(x *TestMessage) (bool, error) {
     return false, nil
   }
   return true, x.Decode(buf)
+}
+
+func (m *TestMessage) SetMessage(x TestMessage) {
+  buf := x.Encode()
+  zeropb.SetBytes(&m.buf, &m.offsets, 17, buf)
 }
 
 type TestMessageTestMessageIterator []byte
@@ -47,5 +76,10 @@ func (i *TestMessageTestMessageIterator) Next(m *TestMessage) (bool, error) {
 
 func (m *TestMessage) Messages() TestMessageTestMessageIterator {
   return TestMessageTestMessageIterator(zeropb.GetRepeatedMessage(m.buf, &m.offsets, 34))
+}
+
+func (m *TestMessage) AppendToMessages(x TestMessage) {
+  buf := x.Encode()
+  zeropb.AppendBytes(&m.buf, &m.offsets, 34, buf)
 }
 
