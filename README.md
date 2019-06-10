@@ -202,12 +202,7 @@ fields lazily (on access).
     name                                         time/op
     DecodeSimpleAccessNone/pb-8                     177ns ± 0%
     DecodeSimpleAccessNone/gogopb-8                 102ns ± 0%
-    DecodeSimpleAccessNone/zeropb-8                69.8ns ± 1%
-
-    name                                         speed
-    DecodeSimpleAccessNone/pb-8                   610MB/s ± 1%
-    DecodeSimpleAccessNone/gogopb-8              1.05GB/s ± 2%
-    DecodeSimpleAccessNone/zeropb-8              1.55GB/s ± 1%
+    DecodeSimpleAccessNone/zeropb-8                50.4ns ± 3%
 
     name                                         allocs/op
     DecodeSimpleAccessNone/pb-8                      4.00 ± 0%
@@ -220,12 +215,7 @@ fields.
     name                                         time/op
     DecodeSimpleAccessAll/pb-8                      228ns ± 0%
     DecodeSimpleAccessAll/gogopb-8                  150ns ± 2%
-    DecodeSimpleAccessAll/zeropb-8                  162ns ± 0%
-
-    name                                         speed
-    DecodeSimpleAccessAll/pb-8                    473MB/s ± 0%
-    DecodeSimpleAccessAll/gogopb-8                717MB/s ± 2%
-    DecodeSimpleAccessAll/zeropb-8                662MB/s ± 2%
+    DecodeSimpleAccessAll/zeropb-8                  132ns ± 0%
 
     name                                         allocs/op
     DecodeSimpleAccessAll/pb-8                       4.00 ± 0%
@@ -238,12 +228,7 @@ slower than other libraries.
     name                                         time/op
     DecodeSimpleAccessRepeatedly/pb-8               347ns ± 1%
     DecodeSimpleAccessRepeatedly/gogopb-8           259ns ± 0%
-    DecodeSimpleAccessRepeatedly/zeropb-8           352ns ± 0%
-
-    name                                         speed
-    DecodeSimpleAccessRepeatedly/pb-8             311MB/s ± 0%
-    DecodeSimpleAccessRepeatedly/gogopb-8         416MB/s ± 0%
-    DecodeSimpleAccessRepeatedly/zeropb-8         306MB/s ± 0%
+    DecodeSimpleAccessRepeatedly/zeropb-8           305ns ± 1%
 
     name                                         allocs/op
     DecodeSimpleAccessRepeatedly/pb-8                4.00 ± 0%
@@ -258,14 +243,9 @@ number of top-level fields set in the message and independent of any fields in
 sub-messages.
 
     name                                         time/op
-    DecodeComplexAccessOne/pb-8                    1.66µs ± 3%
+    DecodeComplexAccessOne/pb-8                    1660ns ± 3%
     DecodeComplexAccessOne/gogopb-8                 829ns ± 2%
-    DecodeComplexAccessOne/zeropb-8                 485ns ± 2%
-
-    name                                         speed
-    DecodeComplexAccessOne/pb-8                   278MB/s ± 3%
-    DecodeComplexAccessOne/gogopb-8               533MB/s ±16%
-    DecodeComplexAccessOne/zeropb-8               948MB/s ± 2%
+    DecodeComplexAccessOne/zeropb-8                 167ns ± 0%
 
     name                                         allocs/op
     DecodeComplexAccessOne/pb-8                      33.0 ± 0%
@@ -273,17 +253,14 @@ sub-messages.
     DecodeComplexAccessOne/zeropb-8                  0.00
 
 A measurement of zeropb's unfortunate re-parsing of the message for repeated
-fields.
+fields. Note that in this case the overhead happens to be less than the benefit
+of lazily decoding one field out of a complex message, resulting in an overall
+speedup from other libraries.
 
     name                                         time/op
-    DecodeComplexAccessRepeatedMessage/pb-8        1.83µs ± 0%
-    DecodeComplexAccessRepeatedMessage/gogopb-8    1.00µs ± 1%
-    DecodeComplexAccessRepeatedMessage/zeropb-8    1.19µs ± 1%
-
-    name                                         speed
-    DecodeComplexAccessRepeatedMessage/pb-8       251MB/s ± 0%
-    DecodeComplexAccessRepeatedMessage/gogopb-8   459MB/s ± 1%
-    DecodeComplexAccessRepeatedMessage/zeropb-8   386MB/s ± 1%
+    DecodeComplexAccessRepeatedMessage/pb-8       1830ns ± 0%
+    DecodeComplexAccessRepeatedMessage/gogopb-8   1000ns ± 1%
+    DecodeComplexAccessRepeatedMessage/zeropb-8    718ns ± 1%
 
     name                                         allocs/op
     DecodeComplexAccessRepeatedMessage/pb-8          33.0 ± 0%
@@ -298,12 +275,7 @@ benchmark, zeropb would be infinitely fast :-D!
     name                                         time/op
     EncodeSimpleSetAll/pb-8                         212ns ± 0%
     EncodeSimpleSetAll/gogopb-8                     175ns ± 1%
-    EncodeSimpleSetAll/zeropb-8                     135ns ± 0%
-
-    name                                         speed
-    EncodeSimpleSetAll/pb-8                       508MB/s ± 0%
-    EncodeSimpleSetAll/gogopb-8                   616MB/s ± 1%
-    EncodeSimpleSetAll/zeropb-8                   800MB/s ± 0%
+    EncodeSimpleSetAll/zeropb-8                     119ns ± 1%
 
     name                                         allocs/op
     EncodeSimpleSetAll/pb-8                          2.00 ± 0%
@@ -318,41 +290,26 @@ setting a field on a go struct.
     name                                         time/op
     EncodeSimpleSetRepeatedly/pb-8                  264ns ± 2%
     EncodeSimpleSetRepeatedly/gogopb-8              188ns ± 1%
-    EncodeSimpleSetRepeatedly/zeropb-8              366ns ± 0%
-
-    name                                         speed
-    EncodeSimpleSetRepeatedly/pb-8                409MB/s ± 2%
-    EncodeSimpleSetRepeatedly/gogopb-8            571MB/s ± 1%
-    EncodeSimpleSetRepeatedly/zeropb-8            294MB/s ± 0%
+    EncodeSimpleSetRepeatedly/zeropb-8              350ns ± 2%
 
     name                                         allocs/op
     EncodeSimpleSetRepeatedly/pb-8                   4.00 ± 0%
     EncodeSimpleSetRepeatedly/gogopb-8               2.00 ± 0%
     EncodeSimpleSetRepeatedly/zeropb-8               0.00
 
-Encoding a complex message is currently slower than other libraries. This is
-expected to get faster, but I haven't yet done speed of light measurements to
-see exactly how much faster.
-
-This benchmark currently causes allocations because the resulting encoded
-message is large enough that it triggers one of the conditions described in the
-Compromises section, but this is not intrinsic. These allocations will go away
-when we specialize FastIntMap.
+Encoding a complex message is also faster, though the ergonomics of this are
+currently not very good. There's some headroom to make it better, but it will
+never be as easy as the other libraries.
 
     name                                         time/op
     EncodeComplex/pb-8                             1.06µs ± 0%
     EncodeComplex/gogopb-8                          754ns ± 5%
-    EncodeComplex/zeropb-8                         1.34µs ± 1%
-
-    name                                         speed
-    EncodeComplex/pb-8                            420MB/s ± 0%
-    EncodeComplex/gogopb-8                        610MB/s ± 5%
-    EncodeComplex/zeropb-8                        325MB/s ± 1%
+    EncodeComplex/zeropb-8                          661ns ± 0%
 
     name                                         allocs/op
     EncodeComplex/pb-8                               7.00 ± 0%
     EncodeComplex/gogopb-8                           3.00 ± 0%
-    EncodeComplex/zeropb-8                           2.00 ± 0%
+    EncodeComplex/zeropb-8                           0.00
 
 
 [Protocol Buffer]: https://developers.google.com/protocol-buffers/
