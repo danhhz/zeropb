@@ -4,6 +4,7 @@ package zeropb
 
 import (
 	"encoding/binary"
+	"io"
 	"math"
 	"reflect"
 	"unsafe"
@@ -409,8 +410,16 @@ func Decode(buf []byte, offsets []uint16) error {
 	for i := range offsets {
 		offsets[i] = 0
 	}
-	for idx := 0; idx < len(buf); {
+	for idx := 0; ; {
+		if idx == len(buf) {
+			return nil
+		} else if idx > len(buf) {
+			return io.ErrUnexpectedEOF
+		}
 		tag, size := binary.Uvarint(buf[idx:])
+		if size == 0 {
+			return io.ErrUnexpectedEOF
+		}
 		idx += size
 		field := int(tag >> 3)
 		typ := tag & 0x7
@@ -418,7 +427,14 @@ func Decode(buf []byte, offsets []uint16) error {
 		switch typ {
 		case proto.WireVarint:
 			offsets[field] = uint16(idx)
+			if idx >= len(buf) {
+				return io.ErrUnexpectedEOF
+			}
 			_, size := binary.Uvarint(buf[idx:])
+			if size == 0 {
+				// Incomplete varint
+				return io.ErrUnexpectedEOF
+			}
 			idx += size
 		case proto.WireFixed32:
 			offsets[field] = uint16(idx)
@@ -436,13 +452,19 @@ func Decode(buf []byte, offsets []uint16) error {
 			// TODO(dan): The proto spec specifically allows a single message
 			// to be split, but I don't understand why it would happen. It's
 			// hard to support so leave it unsupported for now.
+			if idx >= len(buf) {
+				return io.ErrUnexpectedEOF
+			}
 			len, lenSize := binary.Uvarint(buf[idx:])
+			if lenSize == 0 {
+				// Incomplete varint
+				return io.ErrUnexpectedEOF
+			}
 			idx += lenSize + int(len)
 		default:
 			return errors.Errorf(`unsupported type: %d`, typ)
 		}
 	}
-	return nil
 }
 
 // FindNextField parses a bytes field (with no tag) that must be present at the
