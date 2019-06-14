@@ -20,52 +20,52 @@ func (m TestMessage) Text() string {
 func (m TestMessage) WriteText(w io.Writer) {
 	// TODO(dan): A bunch of these aren't right, but this is currently only used
 	// while debugging test failures. Revisit if we start codegen'ing this.
-	if _, ok := m.offsets.Get(1); ok {
+	if offset := m.offsets[1]; offset != 0 {
 		fmt.Fprintf(w, `bool=%t `, m.Bool())
 	}
-	if _, ok := m.offsets.Get(2); ok {
+	if offset := m.offsets[2]; offset != 0 {
 		fmt.Fprintf(w, `int32=%d `, m.Int32())
 	}
-	if _, ok := m.offsets.Get(3); ok {
+	if offset := m.offsets[3]; offset != 0 {
 		fmt.Fprintf(w, `int64=%d `, m.Int64())
 	}
-	if _, ok := m.offsets.Get(4); ok {
+	if offset := m.offsets[4]; offset != 0 {
 		fmt.Fprintf(w, `uint32=%d `, m.Uint32())
 	}
-	if _, ok := m.offsets.Get(5); ok {
+	if offset := m.offsets[5]; offset != 0 {
 		fmt.Fprintf(w, `uint64=%d `, m.Uint64())
 	}
-	if _, ok := m.offsets.Get(6); ok {
+	if offset := m.offsets[6]; offset != 0 {
 		fmt.Fprintf(w, `sint32=%d `, m.Sint32())
 	}
-	if _, ok := m.offsets.Get(7); ok {
+	if offset := m.offsets[7]; offset != 0 {
 		fmt.Fprintf(w, `sint64=%d `, m.Sint64())
 	}
-	if _, ok := m.offsets.Get(8); ok {
+	if offset := m.offsets[8]; offset != 0 {
 		fmt.Fprintf(w, `fixed32=%d `, m.Fixed32())
 	}
-	if _, ok := m.offsets.Get(9); ok {
+	if offset := m.offsets[9]; offset != 0 {
 		fmt.Fprintf(w, `fixed64=%d `, m.Fixed64())
 	}
-	if _, ok := m.offsets.Get(10); ok {
+	if offset := m.offsets[10]; offset != 0 {
 		fmt.Fprintf(w, `sfixed32=%d `, m.Sfixed32())
 	}
-	if _, ok := m.offsets.Get(11); ok {
+	if offset := m.offsets[11]; offset != 0 {
 		fmt.Fprintf(w, `sfixed64=%d `, m.Sfixed64())
 	}
-	if _, ok := m.offsets.Get(12); ok {
+	if offset := m.offsets[12]; offset != 0 {
 		fmt.Fprintf(w, `double=%v `, m.Double())
 	}
-	if _, ok := m.offsets.Get(13); ok {
+	if offset := m.offsets[13]; offset != 0 {
 		fmt.Fprintf(w, `float=%v `, m.Float())
 	}
-	if _, ok := m.offsets.Get(14); ok {
+	if offset := m.offsets[14]; offset != 0 {
 		fmt.Fprintf(w, `string=%s `, m.String())
 	}
-	if _, ok := m.offsets.Get(15); ok {
+	if offset := m.offsets[15]; offset != 0 {
 		fmt.Fprintf(w, `byte_array=%s `, strconv.Quote(string(m.ByteArray())))
 	}
-	if _, ok := m.offsets.Get(16); ok {
+	if offset := m.offsets[16]; offset != 0 {
 		fmt.Fprintf(w, `enum=%d `, m.Enum())
 	}
 	var sub TestMessage
