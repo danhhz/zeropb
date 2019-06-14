@@ -57,10 +57,9 @@ set of requirements for allocation-less use are as follows:
 - [ ] Fuzz testing.
 - [x] More benchmark coverage.
 - [ ] Verify that the accessors are all being inlined.
-- [ ] Instead of blindly using FastIntMap for each message, tailor the offsets
-  to the actual field ids in the message. This would allow us to be
-  allocation-free for are larger set of messages with (the common case of) small
-  and dense field ids.
+- [ ] Instead of blindly using []uint16 for each message, tailor the offsets to
+  the actual field ids in the message. This would allow us support messages with
+  (the uncommon case of) sparse field ids.
 - [ ] Preserve unknown fields.
 - [ ] Support nested messages.
 - [ ] Support references proto messages from other files/packages.
@@ -133,7 +132,7 @@ message with many fields.
 ```golang
 struct Entry {
   buf []byte
-  offsets zeropb.FastIntMap
+  offsets [5]uint16
 }
 
 func (e *Entry) Decode(buf []byte) error { ... }
