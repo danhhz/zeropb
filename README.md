@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/danhhz/zeropb/tree/master.svg?style=shield)](https://circleci.com/gh/danhhz/zeropb/tree/master)
+
 zeropb
 ======
 
