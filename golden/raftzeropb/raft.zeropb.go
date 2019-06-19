@@ -9,13 +9,16 @@ type Entry struct {
   offsets [5]uint16
 }
 
+var repeatedFields_Entry = zeropb.RepeatedFields{
+}
+
 func (m *Entry) Encode() []byte {
   return m.buf
 }
 
 func (m *Entry) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:])
+  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_Entry)
 }
 
 func (m *Entry) Reset(buf []byte) {
@@ -65,13 +68,16 @@ type SnapshotMetadata struct {
   offsets [4]uint16
 }
 
+var repeatedFields_SnapshotMetadata = zeropb.RepeatedFields{
+}
+
 func (m *SnapshotMetadata) Encode() []byte {
   return m.buf
 }
 
 func (m *SnapshotMetadata) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:])
+  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_SnapshotMetadata)
 }
 
 func (m *SnapshotMetadata) Reset(buf []byte) {
@@ -118,13 +124,16 @@ type Snapshot struct {
   offsets [3]uint16
 }
 
+var repeatedFields_Snapshot = zeropb.RepeatedFields{
+}
+
 func (m *Snapshot) Encode() []byte {
   return m.buf
 }
 
 func (m *Snapshot) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:])
+  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_Snapshot)
 }
 
 func (m *Snapshot) Reset(buf []byte) {
@@ -163,13 +172,17 @@ type Message struct {
   offsets [13]uint16
 }
 
+var repeatedFields_Message = zeropb.RepeatedFields{
+  7: struct{}{},
+}
+
 func (m *Message) Encode() []byte {
   return m.buf
 }
 
 func (m *Message) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:])
+  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_Message)
 }
 
 func (m *Message) Reset(buf []byte) {
@@ -300,13 +313,16 @@ type HardState struct {
   offsets [4]uint16
 }
 
+var repeatedFields_HardState = zeropb.RepeatedFields{
+}
+
 func (m *HardState) Encode() []byte {
   return m.buf
 }
 
 func (m *HardState) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:])
+  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_HardState)
 }
 
 func (m *HardState) Reset(buf []byte) {
@@ -348,13 +364,18 @@ type ConfState struct {
   offsets [3]uint16
 }
 
+var repeatedFields_ConfState = zeropb.RepeatedFields{
+  1: struct{}{},
+  2: struct{}{},
+}
+
 func (m *ConfState) Encode() []byte {
   return m.buf
 }
 
 func (m *ConfState) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:])
+  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_ConfState)
 }
 
 func (m *ConfState) Reset(buf []byte) {
@@ -372,13 +393,16 @@ type ConfChange struct {
   offsets [5]uint16
 }
 
+var repeatedFields_ConfChange = zeropb.RepeatedFields{
+}
+
 func (m *ConfChange) Encode() []byte {
   return m.buf
 }
 
 func (m *ConfChange) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:])
+  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_ConfChange)
 }
 
 func (m *ConfChange) Reset(buf []byte) {

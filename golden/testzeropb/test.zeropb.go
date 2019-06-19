@@ -9,13 +9,33 @@ type TestMessage struct {
   offsets [35]uint16
 }
 
+var repeatedFields_TestMessage = zeropb.RepeatedFields{
+  18: struct{}{},
+  19: struct{}{},
+  20: struct{}{},
+  21: struct{}{},
+  22: struct{}{},
+  23: struct{}{},
+  24: struct{}{},
+  25: struct{}{},
+  26: struct{}{},
+  27: struct{}{},
+  28: struct{}{},
+  29: struct{}{},
+  30: struct{}{},
+  31: struct{}{},
+  32: struct{}{},
+  33: struct{}{},
+  34: struct{}{},
+}
+
 func (m *TestMessage) Encode() []byte {
   return m.buf
 }
 
 func (m *TestMessage) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:])
+  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_TestMessage)
 }
 
 func (m *TestMessage) Reset(buf []byte) {

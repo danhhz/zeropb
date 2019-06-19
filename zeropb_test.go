@@ -44,6 +44,15 @@ func TestEncode(t *testing.T) {
 	assert.Equal(t, uint64(1000000), e.Index())
 	assert.Equal(t, uint64(2), e.Term())
 	assert.Equal(t, []byte{9, 10, 11}, e.Data())
+
+	// Into an empty message, write the maximum sized byte slice that won't
+	// trigger the large message panic. math.MaxUint16 is the max message size
+	// minus one byte for the tag, minus three bytes for the varint length.
+	e.Reset(nil)
+	e.SetData(make([]byte, math.MaxUint16-4))
+
+	// Setting another field will now panic it.
+	assert.PanicsWithValue(t, `cannot create a proto this big`, func() { e.SetTerm(1) })
 }
 
 type encodeBuf []byte

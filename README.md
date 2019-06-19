@@ -53,7 +53,7 @@ set of requirements for allocation-less use are as follows:
 - [ ] Generate and use Go types for each protobuf enum. They are currently
   treated at `uint32`s.
 - [ ] Improve ergonomics of constructing trees of messages.
-- [ ] More test coverage.
+- [x] More test coverage.
 - [ ] Fuzz testing.
 - [x] More benchmark coverage.
 - [ ] Verify that the accessors are all being inlined.
@@ -62,7 +62,7 @@ set of requirements for allocation-less use are as follows:
   (the uncommon case of) sparse field ids.
 - [ ] Preserve unknown fields.
 - [ ] Support nested messages.
-- [ ] Support references proto messages from other files/packages.
+- [ ] Support referencing proto messages from other files/packages.
 - [ ] The protobuf spec allows for a non-repeated message to be encoded across
   multiple field id/value pairs, which must then be merged. Decode returns an
   error for this (I don't understand when this would even happen).
@@ -72,6 +72,8 @@ Additional current restrictions which may be addressed:
 - Extensions are not supported.
 - The generated structs do not implement the `proto.Message` interface.
 - Repeated fields can only be iterated, not indexed.
+- Messages longer than math.MaxUint16 are not supported. This includes
+  constructing a message longer than this, which will panic.
 
 
 ## Usage
