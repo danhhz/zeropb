@@ -68,13 +68,21 @@ func generateMessage(st *StringTree, indent StringTreeIndent, m DescriptorProto)
 	st.Write(indent.Next(), "offsets [", largestFieldID+1, "]uint16\n")
 	st.Write(indent, "}\n\n")
 
+	st.Write(indent, "var repeatedFields_", messageGoType, " = zeropb.RepeatedFields{\n")
+	for _, f := range m.Field {
+		if f.GetLabel() == FieldDescriptorProto_LABEL_REPEATED {
+			st.Write(indent.Next(), int32(f.GetNumber()), ": struct{}{},\n")
+		}
+	}
+	st.Write(indent, "}\n\n")
+
 	st.Write(indent, "func (m *", messageGoType, ") Encode() []byte {\n")
 	st.Write(indent.Next(), "return m.buf\n")
 	st.Write(indent, "}\n\n")
 
 	st.Write(indent, "func (m *", messageGoType, ") Decode(buf []byte) error {\n")
 	st.Write(indent.Next(), "m.buf = buf\n")
-	st.Write(indent.Next(), "return zeropb.Decode(m.buf, m.offsets[:])\n")
+	st.Write(indent.Next(), "return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_", messageGoType, ")\n")
 	st.Write(indent, "}\n\n")
 
 	st.Write(indent, "func (m *", messageGoType, ") Reset(buf []byte) {\n")

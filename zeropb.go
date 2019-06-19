@@ -4,6 +4,7 @@ package zeropb
 
 import (
 	"encoding/binary"
+	"io"
 	"math"
 	"reflect"
 	"unsafe"
@@ -335,6 +336,10 @@ func setSingle(buf *[]byte, offsets []uint16, fieldID, typ int, valLen, val []by
 		switch typ {
 		case proto.WireVarint:
 			_, oldLen = binary.Uvarint((*buf)[offset:])
+		case proto.WireFixed32:
+			oldLen = 4
+		case proto.WireFixed64:
+			oldLen = 8
 		case proto.WireBytes:
 			oldValLen, oldValLenLen := binary.Uvarint((*buf)[offset:])
 			oldLen = int(oldValLen) + oldValLenLen
@@ -370,6 +375,9 @@ func setSingle(buf *[]byte, offsets []uint16, fieldID, typ int, valLen, val []by
 	offsets[fieldID] = uint16(offset)
 	*buf = append(*buf, valLen...)
 	*buf = append(*buf, val...)
+	if len(*buf) > math.MaxUint16 {
+		panic(`cannot create a proto this big`)
+	}
 }
 
 func appendSingle(buf *[]byte, offsets []uint16, fieldID, typ int, valLen, val []byte) {
@@ -381,11 +389,14 @@ func appendSingle(buf *[]byte, offsets []uint16, fieldID, typ int, valLen, val [
 
 	offset := len(*buf)
 	// The offset for repeated fields always points at the first one.
-	if existing := int(offsets[fieldID]); existing != 0 {
+	if existing := int(offsets[fieldID]); existing == 0 {
 		offsets[fieldID] = uint16(offset)
 	}
 	*buf = append(*buf, valLen...)
 	*buf = append(*buf, val...)
+	if len(*buf) > math.MaxUint16 {
+		panic(`cannot create a proto this big`)
+	}
 }
 
 // GetRepeatedNonPacked returns a slice of the internal buffer, starting at the
@@ -402,57 +413,68 @@ func GetRepeatedNonPacked(buf []byte, offsets []uint16, fieldID int) []byte {
 
 // Decode parses and validates a proto message, filling in a map of field id ->
 // offset as it goes.
-func Decode(buf []byte, offsets []uint16) error {
+func Decode(buf []byte, offsets []uint16, repeatedFields RepeatedFields) error {
 	if len(buf) > math.MaxUint16 {
 		return errors.Errorf(`cannot decode messages longer than %d bytes`, math.MaxUint16)
 	}
 	for i := range offsets {
 		offsets[i] = 0
 	}
-	for idx := 0; idx < len(buf); {
-		tag, size := binary.Uvarint(buf[idx:])
-		idx += size
-		field := int(tag >> 3)
-		typ := tag & 0x7
-		// fmt.Printf("tag=%x field=%x typ=%x\n", tag, field, typ)
-		switch typ {
-		case proto.WireVarint:
-			offsets[field] = uint16(idx)
-			_, size := binary.Uvarint(buf[idx:])
-			idx += size
-		case proto.WireFixed32:
-			offsets[field] = uint16(idx)
-			idx += 4
-		case proto.WireFixed64:
-			offsets[field] = uint16(idx)
-			idx += 8
-		case proto.WireBytes:
-			// Set the offset if this is the first one we've found but don't overwrite
-			// an earlier offset. The repeated message iterator will start from this
-			// offset and re-parse the rest of the message to find the rest of them.
-			if existing := offsets[field]; existing == 0 {
-				offsets[field] = uint16(idx)
-			}
-			// TODO(dan): The proto spec specifically allows a single message
-			// to be split, but I don't understand why it would happen. It's
-			// hard to support so leave it unsupported for now.
-			len, lenSize := binary.Uvarint(buf[idx:])
-			idx += lenSize + int(len)
-		default:
-			return errors.Errorf(`unsupported type: %d`, typ)
+	for idx := 0; ; {
+		if idx == len(buf) {
+			return nil
+		} else if idx > len(buf) {
+			return io.ErrUnexpectedEOF
 		}
+		tag, size := binary.Uvarint(buf[idx:])
+		if size == 0 {
+			return io.ErrUnexpectedEOF
+		}
+		idx += size
+		if idx >= len(buf) {
+			return io.ErrUnexpectedEOF
+		}
+
+		fieldID := int(tag >> 3)
+		typ := tag & 0x7
+		// fmt.Printf("tag=%x field=%d typ=%d idx=%d\n", tag, fieldID, typ, idx)
+
+		// TODO(dan): It's odd that we're passing in only the repeatedness of the
+		// field. Maybe pass in some sort of field descriptor instead?
+		if _, ok := repeatedFields[fieldID]; ok {
+			// For a repeated field, set the offset if this is the first one we've
+			// found but don't overwrite an earlier offset. The repeated field
+			// iterator will start from this offset and re-parse the rest of the
+			// message to find the rest of them.
+			if existing := offsets[fieldID]; existing == 0 {
+				offsets[fieldID] = uint16(idx)
+			}
+		} else {
+			// For a non-repeated field, always overwrite the offset. The proto spec
+			// says to keep only the last one.
+			offsets[fieldID] = uint16(idx)
+			// TODO(dan): The proto spec specifically allows a single message to be
+			// split, but I don't understand why it would happen. It's hard to
+			// support so leave it unsupported for now.
+		}
+
+		s := fieldDataSize(typ, buf[idx:])
+		if s == 0 {
+			return io.ErrUnexpectedEOF
+		}
+		idx += s
 	}
-	return nil
 }
 
 // FindNextField parses a bytes field (with no tag) that must be present at the
 // very start of buf and finds the next requested field, returning it ready to
 // be handed back to FindNextField.
 func FindNextField(buf []byte, field int) ([]byte, []byte) {
-	// TODO(dan): Remove the duplication between this and Decode.
 	if buf == nil {
 		return nil, nil
 	}
+	// NB: FindNextField doesn't do the same bounds checking that Decode does
+	// because Decode has already validated the input.
 	msgLen, lenSize := binary.Uvarint(buf)
 	msg := buf[lenSize : lenSize+int(msgLen)]
 	for idx := lenSize + int(msgLen); idx < len(buf); {
@@ -463,20 +485,30 @@ func FindNextField(buf []byte, field int) ([]byte, []byte) {
 		if f == field {
 			return buf[idx:], msg
 		}
-		switch typ {
-		case proto.WireVarint:
-			_, size := binary.Uvarint(buf[idx:])
-			idx += size
-		case proto.WireFixed32:
-			idx += 4
-		case proto.WireFixed64:
-			idx += 8
-		case proto.WireBytes:
-			len, lenSize := binary.Uvarint(buf[idx:])
-			idx += lenSize + int(len)
-		default:
-			panic(errors.Errorf(`unsupported type: %d`, typ))
-		}
+		idx += fieldDataSize(typ, buf[idx:])
 	}
 	return nil, msg
 }
+
+func fieldDataSize(typ uint64, buf []byte) int {
+	switch typ {
+	case proto.WireVarint:
+		_, size := binary.Uvarint(buf)
+		return size
+	case proto.WireFixed32:
+		return 4
+	case proto.WireFixed64:
+		return 8
+	case proto.WireBytes:
+		len, lenSize := binary.Uvarint(buf)
+		if lenSize == 0 {
+			return 0
+		}
+		return lenSize + int(len)
+	default:
+		panic(errors.Errorf(`unsupported type: %d`, typ))
+	}
+}
+
+// RepeatedFields indicates which fields are repeated, indexed by field id.
+type RepeatedFields map[int]struct{}
