@@ -62,6 +62,8 @@ set of requirements for allocation-less use are as follows:
 - [ ] Instead of blindly using []uint16 for each message, tailor the offsets to
   the actual field ids in the message. This would allow us support messages with
   (the uncommon case of) sparse field ids.
+- Messages longer than math.MaxUint16 are not supported. This includes
+  constructing a message longer than this, which will panic.
 - [ ] Preserve unknown fields.
 - [ ] Support nested messages.
 - [ ] Support referencing proto messages from other files/packages.
@@ -74,8 +76,6 @@ Additional current restrictions which may be addressed:
 - Extensions are not supported.
 - The generated structs do not implement the `proto.Message` interface.
 - Repeated fields can only be iterated, not indexed.
-- Messages longer than math.MaxUint16 are not supported. This includes
-  constructing a message longer than this, which will panic.
 
 
 ## Usage
