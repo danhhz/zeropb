@@ -6,7 +6,10 @@ import "github.com/danhhz/zeropb"
 
 type TestMessage struct {
   buf []byte
-  offsets [35]uint16
+  offsets struct {
+    a [35]uint16
+    m map[int]uint64
+  }
 }
 
 var repeatedFields_TestMessage = zeropb.RepeatedFields{
@@ -35,7 +38,7 @@ func (m *TestMessage) Encode() []byte {
 
 func (m *TestMessage) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_TestMessage)
+  return zeropb.Decode(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), repeatedFields_TestMessage)
 }
 
 func (m *TestMessage) Reset(buf []byte) {
@@ -43,141 +46,139 @@ func (m *TestMessage) Reset(buf []byte) {
     panic(`buf must be empty`)
   }
   m.buf = buf
-  for i := range m.offsets {
-    m.offsets[i] = 0
-  }
+  zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m).Clear()
 }
 
 func (m *TestMessage) Bool() bool {
-  return zeropb.GetBool(m.buf, m.offsets[:], 1)
+  return zeropb.GetBool(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1)
 }
 
 func (m *TestMessage) SetBool(x bool) {
-  zeropb.SetBool(&m.buf, m.offsets[:], 1, x)
+  zeropb.SetBool(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1, x)
 }
 
 func (m *TestMessage) Int32() int32 {
-  return zeropb.GetInt32(m.buf, m.offsets[:], 2)
+  return zeropb.GetInt32(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2)
 }
 
 func (m *TestMessage) SetInt32(x int32) {
-  zeropb.SetInt32(&m.buf, m.offsets[:], 2, x)
+  zeropb.SetInt32(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2, x)
 }
 
 func (m *TestMessage) Int64() int64 {
-  return zeropb.GetInt64(m.buf, m.offsets[:], 3)
+  return zeropb.GetInt64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 3)
 }
 
 func (m *TestMessage) SetInt64(x int64) {
-  zeropb.SetInt64(&m.buf, m.offsets[:], 3, x)
+  zeropb.SetInt64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 3, x)
 }
 
 func (m *TestMessage) Uint32() uint32 {
-  return zeropb.GetUint32(m.buf, m.offsets[:], 4)
+  return zeropb.GetUint32(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 4)
 }
 
 func (m *TestMessage) SetUint32(x uint32) {
-  zeropb.SetUint32(&m.buf, m.offsets[:], 4, x)
+  zeropb.SetUint32(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 4, x)
 }
 
 func (m *TestMessage) Uint64() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 5)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 5)
 }
 
 func (m *TestMessage) SetUint64(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 5, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 5, x)
 }
 
 func (m *TestMessage) Sint32() int32 {
-  return zeropb.GetZigZagInt32(m.buf, m.offsets[:], 6)
+  return zeropb.GetZigZagInt32(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 6)
 }
 
 func (m *TestMessage) SetSint32(x int32) {
-  zeropb.SetZigZagInt32(&m.buf, m.offsets[:], 6, x)
+  zeropb.SetZigZagInt32(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 6, x)
 }
 
 func (m *TestMessage) Sint64() int64 {
-  return zeropb.GetZigZagInt64(m.buf, m.offsets[:], 7)
+  return zeropb.GetZigZagInt64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 7)
 }
 
 func (m *TestMessage) SetSint64(x int64) {
-  zeropb.SetZigZagInt64(&m.buf, m.offsets[:], 7, x)
+  zeropb.SetZigZagInt64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 7, x)
 }
 
 func (m *TestMessage) Fixed32() uint32 {
-  return zeropb.GetFixedUint32(m.buf, m.offsets[:], 8)
+  return zeropb.GetFixedUint32(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 8)
 }
 
 func (m *TestMessage) SetFixed32(x uint32) {
-  zeropb.SetFixedUint32(&m.buf, m.offsets[:], 8, x)
+  zeropb.SetFixedUint32(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 8, x)
 }
 
 func (m *TestMessage) Fixed64() uint64 {
-  return zeropb.GetFixedUint64(m.buf, m.offsets[:], 9)
+  return zeropb.GetFixedUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 9)
 }
 
 func (m *TestMessage) SetFixed64(x uint64) {
-  zeropb.SetFixedUint64(&m.buf, m.offsets[:], 9, x)
+  zeropb.SetFixedUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 9, x)
 }
 
 func (m *TestMessage) Sfixed32() int32 {
-  return zeropb.GetFixedInt32(m.buf, m.offsets[:], 10)
+  return zeropb.GetFixedInt32(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 10)
 }
 
 func (m *TestMessage) SetSfixed32(x int32) {
-  zeropb.SetFixedInt32(&m.buf, m.offsets[:], 10, x)
+  zeropb.SetFixedInt32(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 10, x)
 }
 
 func (m *TestMessage) Sfixed64() int64 {
-  return zeropb.GetFixedInt64(m.buf, m.offsets[:], 11)
+  return zeropb.GetFixedInt64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 11)
 }
 
 func (m *TestMessage) SetSfixed64(x int64) {
-  zeropb.SetFixedInt64(&m.buf, m.offsets[:], 11, x)
+  zeropb.SetFixedInt64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 11, x)
 }
 
 func (m *TestMessage) Double() float64 {
-  return zeropb.GetFloat64(m.buf, m.offsets[:], 12)
+  return zeropb.GetFloat64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 12)
 }
 
 func (m *TestMessage) SetDouble(x float64) {
-  zeropb.SetFloat64(&m.buf, m.offsets[:], 12, x)
+  zeropb.SetFloat64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 12, x)
 }
 
 func (m *TestMessage) Float() float32 {
-  return zeropb.GetFloat32(m.buf, m.offsets[:], 13)
+  return zeropb.GetFloat32(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 13)
 }
 
 func (m *TestMessage) SetFloat(x float32) {
-  zeropb.SetFloat32(&m.buf, m.offsets[:], 13, x)
+  zeropb.SetFloat32(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 13, x)
 }
 
 func (m *TestMessage) String() string {
-  return zeropb.GetString(m.buf, m.offsets[:], 14)
+  return zeropb.GetString(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 14)
 }
 
 func (m *TestMessage) SetString(x string) {
-  zeropb.SetString(&m.buf, m.offsets[:], 14, x)
+  zeropb.SetString(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 14, x)
 }
 
 func (m *TestMessage) ByteArray() []byte {
-  return zeropb.GetBytes(m.buf, m.offsets[:], 15)
+  return zeropb.GetBytes(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 15)
 }
 
 func (m *TestMessage) SetByteArray(x []byte) {
-  zeropb.SetBytes(&m.buf, m.offsets[:], 15, x)
+  zeropb.SetBytes(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 15, x)
 }
 
 func (m *TestMessage) Enum() uint32 {
-  return zeropb.GetUint32(m.buf, m.offsets[:], 16)
+  return zeropb.GetUint32(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 16)
 }
 
 func (m *TestMessage) SetEnum(x uint32) {
-  zeropb.SetUint32(&m.buf, m.offsets[:], 16, x)
+  zeropb.SetUint32(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 16, x)
 }
 
 func (m *TestMessage) Message(x *TestMessage) (bool, error) {
-  buf := zeropb.GetBytes(m.buf, m.offsets[:], 17)
+  buf := zeropb.GetBytes(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 17)
   if buf == nil {
     return false, nil
   }
@@ -186,7 +187,7 @@ func (m *TestMessage) Message(x *TestMessage) (bool, error) {
 
 func (m *TestMessage) SetMessage(x TestMessage) {
   buf := x.Encode()
-  zeropb.SetBytes(&m.buf, m.offsets[:], 17, buf)
+  zeropb.SetBytes(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 17, buf)
 }
 
 type TestMessageTestMessageIterator []byte
@@ -201,11 +202,11 @@ func (i *TestMessageTestMessageIterator) Next(m *TestMessage) (bool, error) {
 }
 
 func (m *TestMessage) Messages() TestMessageTestMessageIterator {
-  return TestMessageTestMessageIterator(zeropb.GetRepeatedNonPacked(m.buf, m.offsets[:], 34))
+  return TestMessageTestMessageIterator(zeropb.GetRepeatedNonPacked(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 34))
 }
 
 func (m *TestMessage) AppendToMessages(x TestMessage) {
   buf := x.Encode()
-  zeropb.AppendBytes(&m.buf, m.offsets[:], 34, buf)
+  zeropb.AppendBytes(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 34, buf)
 }
 

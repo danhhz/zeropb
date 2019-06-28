@@ -24,7 +24,7 @@ than it currently is). If you're not specifically looking to make these
 tradeoffs, you'd probably be better served by another library.
 
 
-## Compromises
+## Performance Expectations
 
 In contrast to [FlatBuffers] and [Cap’n Proto], the protobuf wire format was not
 specifically designed for allocation-less use. This means that zeropb ends up as
@@ -32,19 +32,13 @@ somewhat more awkward to use than other protobuf variants for Go, such as the
 official Google one or gogoprotobuf.
 
 It also means that it is not always possible to decode without heap allocations.
-This list will become _considerably_ less restrictive over time, but the current
-set of requirements for allocation-less use are as follows:
+Usage will be allocation-less if the following conditions are met:
 
-- All field ids are less than 32.
-- The encoded/decoded messages are not too large, where too large is complicated
-  to define but can be thought of as a handful of small fields and one big or
-  repeated field.
-
-  Specifically, if largest offset of the first appearance of a field in an
-  encoded message is 15 or greater, there will be one allocation per message.
-  That is, an encoded message is a concatenation of field id/value pairs. Field
-  ids may be repeated. Find the offset of the first appearance of each field id
-  in the encoded message. The largest of these offsets must be less than 15.
+- The encoded representation of the message is less than math.MaxUint16 in
+  length.
+- The field ids are sufficiently dense, where sufficient is defined by a
+  heuristic. The heuristic's decision can be overridden at the cost of a larger
+  in-memory representation.
 
 
 ## The Road to v1.0.0
@@ -76,6 +70,7 @@ Additional current restrictions which may be addressed:
 - Extensions are not supported.
 - The generated structs do not implement the `proto.Message` interface.
 - Repeated fields can only be iterated, not indexed.
+- Required fields are treated as optional.
 
 
 ## Usage
@@ -136,7 +131,10 @@ message with many fields.
 ```golang
 struct Entry {
   buf []byte
-  offsets [5]uint16
+  offsets struct {
+    a [5]uint16
+    m map[int]uint64
+  }
 }
 
 func (e *Entry) Decode(buf []byte) error { ... }
@@ -203,9 +201,9 @@ that this is not an apples-to-apples comparison because zeropb decodes the
 fields lazily (on access).
 
     name                                         time/op
-    DecodeSimpleAccessNone/pb-8                     177ns ± 0%
-    DecodeSimpleAccessNone/gogopb-8                 102ns ± 0%
-    DecodeSimpleAccessNone/zeropb-8                50.4ns ± 3%
+    DecodeSimpleAccessNone/pb-8                     177ns ± 1%
+    DecodeSimpleAccessNone/gogopb-8                 103ns ± 2%
+    DecodeSimpleAccessNone/zeropb-8                77.0ns ± 2%
 
     name                                         allocs/op
     DecodeSimpleAccessNone/pb-8                      4.00 ± 0%
@@ -216,9 +214,9 @@ An apples-to-apples comparison of speed of decoding a message and all of its
 fields.
 
     name                                         time/op
-    DecodeSimpleAccessAll/pb-8                      228ns ± 0%
-    DecodeSimpleAccessAll/gogopb-8                  150ns ± 2%
-    DecodeSimpleAccessAll/zeropb-8                  132ns ± 0%
+    DecodeSimpleAccessAll/pb-8                      233ns ± 0%
+    DecodeSimpleAccessAll/gogopb-8                  148ns ± 0%
+    DecodeSimpleAccessAll/zeropb-8                  161ns ± 3%
 
     name                                         allocs/op
     DecodeSimpleAccessAll/pb-8                       4.00 ± 0%
@@ -229,9 +227,9 @@ Fields are decoded lazily and not cached, so repeatedly using the same fields is
 slower than other libraries.
 
     name                                         time/op
-    DecodeSimpleAccessRepeatedly/pb-8               347ns ± 1%
-    DecodeSimpleAccessRepeatedly/gogopb-8           259ns ± 0%
-    DecodeSimpleAccessRepeatedly/zeropb-8           305ns ± 1%
+    DecodeSimpleAccessRepeatedly/pb-8               336ns ± 1%
+    DecodeSimpleAccessRepeatedly/gogopb-8           248ns ± 0%
+    DecodeSimpleAccessRepeatedly/zeropb-8           337ns ± 8%
 
     name                                         allocs/op
     DecodeSimpleAccessRepeatedly/pb-8                4.00 ± 0%
@@ -246,9 +244,9 @@ number of top-level fields set in the message and independent of any fields in
 sub-messages.
 
     name                                         time/op
-    DecodeComplexAccessOne/pb-8                    1660ns ± 3%
-    DecodeComplexAccessOne/gogopb-8                 829ns ± 2%
-    DecodeComplexAccessOne/zeropb-8                 167ns ± 0%
+    DecodeComplexAccessOne/pb-8                    1.67µs ± 0%
+    DecodeComplexAccessOne/gogopb-8                 844ns ± 0%
+    DecodeComplexAccessOne/zeropb-8                 330ns ± 2%
 
     name                                         allocs/op
     DecodeComplexAccessOne/pb-8                      33.0 ± 0%
@@ -261,9 +259,9 @@ of lazily decoding one field out of a complex message, resulting in an overall
 speedup from other libraries.
 
     name                                         time/op
-    DecodeComplexAccessRepeatedMessage/pb-8       1830ns ± 0%
-    DecodeComplexAccessRepeatedMessage/gogopb-8   1000ns ± 1%
-    DecodeComplexAccessRepeatedMessage/zeropb-8    718ns ± 1%
+    DecodeComplexAccessRepeatedMessage/pb-8        1.85µs ± 0%
+    DecodeComplexAccessRepeatedMessage/gogopb-8    1.02µs ± 0%
+    DecodeComplexAccessRepeatedMessage/zeropb-8     950ns ± 0%
 
     name                                         allocs/op
     DecodeComplexAccessRepeatedMessage/pb-8          33.0 ± 0%
@@ -276,9 +274,9 @@ call to a field setter, so if we pulled setting the fields out of this
 benchmark, zeropb would be infinitely fast :-D!
 
     name                                         time/op
-    EncodeSimpleSetAll/pb-8                         212ns ± 0%
-    EncodeSimpleSetAll/gogopb-8                     175ns ± 1%
-    EncodeSimpleSetAll/zeropb-8                     119ns ± 1%
+    EncodeSimpleSetAll/pb-8                         217ns ± 0%
+    EncodeSimpleSetAll/gogopb-8                     176ns ± 2%
+    EncodeSimpleSetAll/zeropb-8                     133ns ± 1%
 
     name                                         allocs/op
     EncodeSimpleSetAll/pb-8                          2.00 ± 0%
@@ -291,9 +289,9 @@ message with each call to a field setter, so they're doing much more work than
 setting a field on a go struct.
 
     name                                         time/op
-    EncodeSimpleSetRepeatedly/pb-8                  264ns ± 2%
-    EncodeSimpleSetRepeatedly/gogopb-8              188ns ± 1%
-    EncodeSimpleSetRepeatedly/zeropb-8              350ns ± 2%
+    EncodeSimpleSetRepeatedly/pb-8                  269ns ± 1%
+    EncodeSimpleSetRepeatedly/gogopb-8              189ns ± 1%
+    EncodeSimpleSetRepeatedly/zeropb-8              383ns ± 1%
 
     name                                         allocs/op
     EncodeSimpleSetRepeatedly/pb-8                   4.00 ± 0%
@@ -305,9 +303,9 @@ currently not very good. There's some headroom to make it better, but it will
 never be as easy as the other libraries.
 
     name                                         time/op
-    EncodeComplex/pb-8                             1.06µs ± 0%
-    EncodeComplex/gogopb-8                          754ns ± 5%
-    EncodeComplex/zeropb-8                          661ns ± 0%
+    EncodeComplex/pb-8                             1.10µs ± 1%
+    EncodeComplex/gogopb-8                          746ns ± 0%
+    EncodeComplex/zeropb-8                          743ns ± 0%
 
     name                                         allocs/op
     EncodeComplex/pb-8                               7.00 ± 0%
