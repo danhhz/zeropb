@@ -31,6 +31,8 @@ func Generate(req *CodeGeneratorRequest) (*CodeGeneratorResponse, error) {
 	return res, nil
 }
 
+const offsets = "zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m)"
+
 func generateFile(req *FileDescriptorProto) (*CodeGeneratorResponse_File, error) {
 	var buf strings.Builder
 	st := NewStringTree(&buf, `  `)
@@ -65,7 +67,10 @@ func generateMessage(st *StringTree, indent StringTreeIndent, m DescriptorProto)
 
 	st.Write(indent, "type ", messageGoType, " struct {\n")
 	st.Write(indent.Next(), "buf []byte\n")
-	st.Write(indent.Next(), "offsets [", largestFieldID+1, "]uint16\n")
+	st.Write(indent.Next(), "offsets struct {\n")
+	st.Write(indent.Next().Next(), "a [", largestFieldID+1, "]uint16\n")
+	st.Write(indent.Next().Next(), "m map[int]uint64\n")
+	st.Write(indent.Next(), "}\n")
 	st.Write(indent, "}\n\n")
 
 	st.Write(indent, "var repeatedFields_", messageGoType, " = zeropb.RepeatedFields{\n")
@@ -82,7 +87,7 @@ func generateMessage(st *StringTree, indent StringTreeIndent, m DescriptorProto)
 
 	st.Write(indent, "func (m *", messageGoType, ") Decode(buf []byte) error {\n")
 	st.Write(indent.Next(), "m.buf = buf\n")
-	st.Write(indent.Next(), "return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_", messageGoType, ")\n")
+	st.Write(indent.Next(), "return zeropb.Decode(m.buf, ", offsets, ", repeatedFields_", messageGoType, ")\n")
 	st.Write(indent, "}\n\n")
 
 	st.Write(indent, "func (m *", messageGoType, ") Reset(buf []byte) {\n")
@@ -90,9 +95,7 @@ func generateMessage(st *StringTree, indent StringTreeIndent, m DescriptorProto)
 	st.Write(indent.Next().Next(), "panic(`buf must be empty`)\n")
 	st.Write(indent.Next(), "}\n")
 	st.Write(indent.Next(), "m.buf = buf\n")
-	st.Write(indent.Next(), "for i := range m.offsets {\n")
-	st.Write(indent.Next().Next(), "m.offsets[i] = 0\n")
-	st.Write(indent.Next(), "}\n")
+	st.Write(indent.Next(), offsets, ".Clear()\n")
 	st.Write(indent, "}\n\n")
 
 	for _, f := range m.Field {
@@ -126,11 +129,11 @@ func generateSimpleField(
 	fieldGoType, fieldFnName := fieldToGoTypeSimple(f.GetType())
 
 	st.Write(indent, "func (m *", messageGoType, ") ", fieldGoName, "() ", fieldGoType, " {\n")
-	st.Write(indent.Next(), "return zeropb.Get", fieldFnName, "(m.buf, m.offsets[:], ", f.GetNumber(), ")\n")
+	st.Write(indent.Next(), "return zeropb.Get", fieldFnName, "(m.buf, ", offsets, ", ", f.GetNumber(), ")\n")
 	st.Write(indent, "}\n\n")
 
 	st.Write(indent, "func (m *", messageGoType, ") Set", fieldGoName, "(x ", fieldGoType, ") {\n")
-	st.Write(indent.Next(), "zeropb.Set", fieldFnName, "(&m.buf, m.offsets[:], ", f.GetNumber(), ", x)\n")
+	st.Write(indent.Next(), "zeropb.Set", fieldFnName, "(&m.buf, ", offsets, ", ", f.GetNumber(), ", x)\n")
 	st.Write(indent, "}\n\n")
 }
 
@@ -141,7 +144,7 @@ func generateMessageField(
 	fieldGoType := fieldToGoTypeMessage(f.GetTypeName())
 
 	st.Write(indent, "func (m *", messageGoType, ") ", fieldGoName, "(x *", fieldGoType, ") (bool, error) {\n")
-	st.Write(indent.Next(), "buf := zeropb.GetBytes(m.buf, m.offsets[:], ", f.GetNumber(), ")\n")
+	st.Write(indent.Next(), "buf := zeropb.GetBytes(m.buf, ", offsets, ", ", f.GetNumber(), ")\n")
 	st.Write(indent.Next(), "if buf == nil {\n")
 	st.Write(indent.Next().Next(), "return false, nil\n")
 	st.Write(indent.Next(), "}\n")
@@ -150,7 +153,7 @@ func generateMessageField(
 
 	st.Write(indent, "func (m *", messageGoType, ") Set", fieldGoName, "(x ", fieldGoType, ") {\n")
 	st.Write(indent.Next(), "buf := x.Encode()\n")
-	st.Write(indent.Next(), "zeropb.SetBytes(&m.buf, m.offsets[:], ", f.GetNumber(), ", buf)\n")
+	st.Write(indent.Next(), "zeropb.SetBytes(&m.buf, ", offsets, ", ", f.GetNumber(), ", buf)\n")
 	st.Write(indent, "}\n\n")
 }
 
@@ -173,12 +176,12 @@ func generateRepeatedMessageField(
 	st.Write(indent, "}\n\n")
 
 	st.Write(indent, "func (m *", messageGoType, ") ", fieldGoName, "() ", itGoType, " {\n")
-	st.Write(indent.Next(), "return ", itGoType, "(zeropb.GetRepeatedNonPacked(m.buf, m.offsets[:], ", f.GetNumber(), "))\n")
+	st.Write(indent.Next(), "return ", itGoType, "(zeropb.GetRepeatedNonPacked(m.buf, ", offsets, ", ", f.GetNumber(), "))\n")
 	st.Write(indent, "}\n\n")
 
 	st.Write(indent, "func (m *", messageGoType, ") AppendTo", fieldGoName, "(x ", fieldGoType, ") {\n")
 	st.Write(indent.Next(), "buf := x.Encode()\n")
-	st.Write(indent.Next(), "zeropb.AppendBytes(&m.buf, m.offsets[:], ", f.GetNumber(), ", buf)\n")
+	st.Write(indent.Next(), "zeropb.AppendBytes(&m.buf, ", offsets, ", ", f.GetNumber(), ", buf)\n")
 	st.Write(indent, "}\n\n")
 }
 

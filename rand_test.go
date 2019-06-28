@@ -160,6 +160,7 @@ func TestRandDecode(t *testing.T) {
 	zero := gogoToZeroViaBytes(gogo)
 	roundtripped := zeroToGogoViaCopy(zero)
 	require.Equal(t, gogo, roundtripped)
+	verifyOffsetsInvariants(t, zero.Offsets)
 }
 
 func TestRandEncode(t *testing.T) {
@@ -171,6 +172,7 @@ func TestRandEncode(t *testing.T) {
 	zero := gogoToZeroViaCopy(gogo)
 	roundtripped := zeroToGogoViaBytes(zero)
 	require.Equal(t, gogo, roundtripped)
+	verifyOffsetsInvariants(t, zero.Offsets)
 }
 
 func mutate(rng *rand.Rand, gogo *testgogopb.TestMessage, zero *testzeropb.TestMessage) {
@@ -290,20 +292,17 @@ func mutate(rng *rand.Rand, gogo *testgogopb.TestMessage, zero *testzeropb.TestM
 func TestRandMutations(t *testing.T) {
 	const iterations = 1000
 	seed := time.Now().UnixNano()
-	seed = 1560546759782267000
 	log.Printf("seed=%d", seed)
 	rng := rand.New(rand.NewSource(seed))
 
 	var gogo testgogopb.TestMessage
 	var zero testzeropb.TestMessage
 
-	defer func() {
-		if err := recover(); err != nil && err != `cannot create a proto this big` {
-			t.Fatal(err)
-		}
-	}()
+	// TODO(dan): Test offsets edge cases in this. I tried but the require.Equal
+	// calls started taking forever.
 	for i := 0; i < iterations; i++ {
 		mutate(rng, &gogo, &zero)
+		verifyOffsetsInvariants(t, zero.Offsets)
 
 		viaBytes := zeroToGogoViaBytes(zero)
 		require.Equal(t, gogo, *viaBytes)
@@ -312,7 +311,9 @@ func TestRandMutations(t *testing.T) {
 
 		zeroViaBytes := gogoToZeroViaBytes(&gogo)
 		require.Equal(t, &gogo, zeroToGogoViaCopy(zeroViaBytes))
+		verifyOffsetsInvariants(t, zeroViaBytes.Offsets)
 		zeroViaCopy := gogoToZeroViaCopy(&gogo)
 		require.Equal(t, &gogo, zeroToGogoViaBytes(zeroViaCopy))
+		verifyOffsetsInvariants(t, zeroViaCopy.Offsets)
 	}
 }
