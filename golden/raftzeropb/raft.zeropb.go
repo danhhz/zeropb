@@ -6,7 +6,10 @@ import "github.com/danhhz/zeropb"
 
 type Entry struct {
   buf []byte
-  offsets [5]uint16
+  offsets struct {
+    a [5]uint16
+    m map[int]uint64
+  }
 }
 
 var repeatedFields_Entry = zeropb.RepeatedFields{
@@ -18,7 +21,7 @@ func (m *Entry) Encode() []byte {
 
 func (m *Entry) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_Entry)
+  return zeropb.Decode(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), repeatedFields_Entry)
 }
 
 func (m *Entry) Reset(buf []byte) {
@@ -26,46 +29,47 @@ func (m *Entry) Reset(buf []byte) {
     panic(`buf must be empty`)
   }
   m.buf = buf
-  for i := range m.offsets {
-    m.offsets[i] = 0
-  }
+  zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m).Clear()
 }
 
 func (m *Entry) Term() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 2)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2)
 }
 
 func (m *Entry) SetTerm(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 2, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2, x)
 }
 
 func (m *Entry) Index() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 3)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 3)
 }
 
 func (m *Entry) SetIndex(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 3, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 3, x)
 }
 
 func (m *Entry) Type() uint32 {
-  return zeropb.GetUint32(m.buf, m.offsets[:], 1)
+  return zeropb.GetUint32(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1)
 }
 
 func (m *Entry) SetType(x uint32) {
-  zeropb.SetUint32(&m.buf, m.offsets[:], 1, x)
+  zeropb.SetUint32(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1, x)
 }
 
 func (m *Entry) Data() []byte {
-  return zeropb.GetBytes(m.buf, m.offsets[:], 4)
+  return zeropb.GetBytes(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 4)
 }
 
 func (m *Entry) SetData(x []byte) {
-  zeropb.SetBytes(&m.buf, m.offsets[:], 4, x)
+  zeropb.SetBytes(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 4, x)
 }
 
 type SnapshotMetadata struct {
   buf []byte
-  offsets [4]uint16
+  offsets struct {
+    a [4]uint16
+    m map[int]uint64
+  }
 }
 
 var repeatedFields_SnapshotMetadata = zeropb.RepeatedFields{
@@ -77,7 +81,7 @@ func (m *SnapshotMetadata) Encode() []byte {
 
 func (m *SnapshotMetadata) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_SnapshotMetadata)
+  return zeropb.Decode(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), repeatedFields_SnapshotMetadata)
 }
 
 func (m *SnapshotMetadata) Reset(buf []byte) {
@@ -85,13 +89,11 @@ func (m *SnapshotMetadata) Reset(buf []byte) {
     panic(`buf must be empty`)
   }
   m.buf = buf
-  for i := range m.offsets {
-    m.offsets[i] = 0
-  }
+  zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m).Clear()
 }
 
 func (m *SnapshotMetadata) ConfState(x *ConfState) (bool, error) {
-  buf := zeropb.GetBytes(m.buf, m.offsets[:], 1)
+  buf := zeropb.GetBytes(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1)
   if buf == nil {
     return false, nil
   }
@@ -100,28 +102,31 @@ func (m *SnapshotMetadata) ConfState(x *ConfState) (bool, error) {
 
 func (m *SnapshotMetadata) SetConfState(x ConfState) {
   buf := x.Encode()
-  zeropb.SetBytes(&m.buf, m.offsets[:], 1, buf)
+  zeropb.SetBytes(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1, buf)
 }
 
 func (m *SnapshotMetadata) Index() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 2)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2)
 }
 
 func (m *SnapshotMetadata) SetIndex(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 2, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2, x)
 }
 
 func (m *SnapshotMetadata) Term() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 3)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 3)
 }
 
 func (m *SnapshotMetadata) SetTerm(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 3, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 3, x)
 }
 
 type Snapshot struct {
   buf []byte
-  offsets [3]uint16
+  offsets struct {
+    a [3]uint16
+    m map[int]uint64
+  }
 }
 
 var repeatedFields_Snapshot = zeropb.RepeatedFields{
@@ -133,7 +138,7 @@ func (m *Snapshot) Encode() []byte {
 
 func (m *Snapshot) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_Snapshot)
+  return zeropb.Decode(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), repeatedFields_Snapshot)
 }
 
 func (m *Snapshot) Reset(buf []byte) {
@@ -141,21 +146,19 @@ func (m *Snapshot) Reset(buf []byte) {
     panic(`buf must be empty`)
   }
   m.buf = buf
-  for i := range m.offsets {
-    m.offsets[i] = 0
-  }
+  zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m).Clear()
 }
 
 func (m *Snapshot) Data() []byte {
-  return zeropb.GetBytes(m.buf, m.offsets[:], 1)
+  return zeropb.GetBytes(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1)
 }
 
 func (m *Snapshot) SetData(x []byte) {
-  zeropb.SetBytes(&m.buf, m.offsets[:], 1, x)
+  zeropb.SetBytes(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1, x)
 }
 
 func (m *Snapshot) Metadata(x *SnapshotMetadata) (bool, error) {
-  buf := zeropb.GetBytes(m.buf, m.offsets[:], 2)
+  buf := zeropb.GetBytes(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2)
   if buf == nil {
     return false, nil
   }
@@ -164,12 +167,15 @@ func (m *Snapshot) Metadata(x *SnapshotMetadata) (bool, error) {
 
 func (m *Snapshot) SetMetadata(x SnapshotMetadata) {
   buf := x.Encode()
-  zeropb.SetBytes(&m.buf, m.offsets[:], 2, buf)
+  zeropb.SetBytes(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2, buf)
 }
 
 type Message struct {
   buf []byte
-  offsets [13]uint16
+  offsets struct {
+    a [13]uint16
+    m map[int]uint64
+  }
 }
 
 var repeatedFields_Message = zeropb.RepeatedFields{
@@ -182,7 +188,7 @@ func (m *Message) Encode() []byte {
 
 func (m *Message) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_Message)
+  return zeropb.Decode(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), repeatedFields_Message)
 }
 
 func (m *Message) Reset(buf []byte) {
@@ -190,57 +196,55 @@ func (m *Message) Reset(buf []byte) {
     panic(`buf must be empty`)
   }
   m.buf = buf
-  for i := range m.offsets {
-    m.offsets[i] = 0
-  }
+  zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m).Clear()
 }
 
 func (m *Message) Type() uint32 {
-  return zeropb.GetUint32(m.buf, m.offsets[:], 1)
+  return zeropb.GetUint32(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1)
 }
 
 func (m *Message) SetType(x uint32) {
-  zeropb.SetUint32(&m.buf, m.offsets[:], 1, x)
+  zeropb.SetUint32(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1, x)
 }
 
 func (m *Message) To() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 2)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2)
 }
 
 func (m *Message) SetTo(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 2, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2, x)
 }
 
 func (m *Message) From() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 3)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 3)
 }
 
 func (m *Message) SetFrom(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 3, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 3, x)
 }
 
 func (m *Message) Term() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 4)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 4)
 }
 
 func (m *Message) SetTerm(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 4, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 4, x)
 }
 
 func (m *Message) LogTerm() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 5)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 5)
 }
 
 func (m *Message) SetLogTerm(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 5, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 5, x)
 }
 
 func (m *Message) Index() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 6)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 6)
 }
 
 func (m *Message) SetIndex(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 6, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 6, x)
 }
 
 type MessageEntryIterator []byte
@@ -255,24 +259,24 @@ func (i *MessageEntryIterator) Next(m *Entry) (bool, error) {
 }
 
 func (m *Message) Entries() MessageEntryIterator {
-  return MessageEntryIterator(zeropb.GetRepeatedNonPacked(m.buf, m.offsets[:], 7))
+  return MessageEntryIterator(zeropb.GetRepeatedNonPacked(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 7))
 }
 
 func (m *Message) AppendToEntries(x Entry) {
   buf := x.Encode()
-  zeropb.AppendBytes(&m.buf, m.offsets[:], 7, buf)
+  zeropb.AppendBytes(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 7, buf)
 }
 
 func (m *Message) Commit() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 8)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 8)
 }
 
 func (m *Message) SetCommit(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 8, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 8, x)
 }
 
 func (m *Message) Snapshot(x *Snapshot) (bool, error) {
-  buf := zeropb.GetBytes(m.buf, m.offsets[:], 9)
+  buf := zeropb.GetBytes(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 9)
   if buf == nil {
     return false, nil
   }
@@ -281,36 +285,39 @@ func (m *Message) Snapshot(x *Snapshot) (bool, error) {
 
 func (m *Message) SetSnapshot(x Snapshot) {
   buf := x.Encode()
-  zeropb.SetBytes(&m.buf, m.offsets[:], 9, buf)
+  zeropb.SetBytes(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 9, buf)
 }
 
 func (m *Message) Reject() bool {
-  return zeropb.GetBool(m.buf, m.offsets[:], 10)
+  return zeropb.GetBool(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 10)
 }
 
 func (m *Message) SetReject(x bool) {
-  zeropb.SetBool(&m.buf, m.offsets[:], 10, x)
+  zeropb.SetBool(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 10, x)
 }
 
 func (m *Message) RejectHint() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 11)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 11)
 }
 
 func (m *Message) SetRejectHint(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 11, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 11, x)
 }
 
 func (m *Message) Context() []byte {
-  return zeropb.GetBytes(m.buf, m.offsets[:], 12)
+  return zeropb.GetBytes(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 12)
 }
 
 func (m *Message) SetContext(x []byte) {
-  zeropb.SetBytes(&m.buf, m.offsets[:], 12, x)
+  zeropb.SetBytes(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 12, x)
 }
 
 type HardState struct {
   buf []byte
-  offsets [4]uint16
+  offsets struct {
+    a [4]uint16
+    m map[int]uint64
+  }
 }
 
 var repeatedFields_HardState = zeropb.RepeatedFields{
@@ -322,7 +329,7 @@ func (m *HardState) Encode() []byte {
 
 func (m *HardState) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_HardState)
+  return zeropb.Decode(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), repeatedFields_HardState)
 }
 
 func (m *HardState) Reset(buf []byte) {
@@ -330,38 +337,39 @@ func (m *HardState) Reset(buf []byte) {
     panic(`buf must be empty`)
   }
   m.buf = buf
-  for i := range m.offsets {
-    m.offsets[i] = 0
-  }
+  zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m).Clear()
 }
 
 func (m *HardState) Term() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 1)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1)
 }
 
 func (m *HardState) SetTerm(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 1, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1, x)
 }
 
 func (m *HardState) Vote() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 2)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2)
 }
 
 func (m *HardState) SetVote(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 2, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2, x)
 }
 
 func (m *HardState) Commit() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 3)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 3)
 }
 
 func (m *HardState) SetCommit(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 3, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 3, x)
 }
 
 type ConfState struct {
   buf []byte
-  offsets [3]uint16
+  offsets struct {
+    a [3]uint16
+    m map[int]uint64
+  }
 }
 
 var repeatedFields_ConfState = zeropb.RepeatedFields{
@@ -375,7 +383,7 @@ func (m *ConfState) Encode() []byte {
 
 func (m *ConfState) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_ConfState)
+  return zeropb.Decode(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), repeatedFields_ConfState)
 }
 
 func (m *ConfState) Reset(buf []byte) {
@@ -383,14 +391,15 @@ func (m *ConfState) Reset(buf []byte) {
     panic(`buf must be empty`)
   }
   m.buf = buf
-  for i := range m.offsets {
-    m.offsets[i] = 0
-  }
+  zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m).Clear()
 }
 
 type ConfChange struct {
   buf []byte
-  offsets [5]uint16
+  offsets struct {
+    a [5]uint16
+    m map[int]uint64
+  }
 }
 
 var repeatedFields_ConfChange = zeropb.RepeatedFields{
@@ -402,7 +411,7 @@ func (m *ConfChange) Encode() []byte {
 
 func (m *ConfChange) Decode(buf []byte) error {
   m.buf = buf
-  return zeropb.Decode(m.buf, m.offsets[:], repeatedFields_ConfChange)
+  return zeropb.Decode(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), repeatedFields_ConfChange)
 }
 
 func (m *ConfChange) Reset(buf []byte) {
@@ -410,40 +419,38 @@ func (m *ConfChange) Reset(buf []byte) {
     panic(`buf must be empty`)
   }
   m.buf = buf
-  for i := range m.offsets {
-    m.offsets[i] = 0
-  }
+  zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m).Clear()
 }
 
 func (m *ConfChange) ID() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 1)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1)
 }
 
 func (m *ConfChange) SetID(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 1, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 1, x)
 }
 
 func (m *ConfChange) Type() uint32 {
-  return zeropb.GetUint32(m.buf, m.offsets[:], 2)
+  return zeropb.GetUint32(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2)
 }
 
 func (m *ConfChange) SetType(x uint32) {
-  zeropb.SetUint32(&m.buf, m.offsets[:], 2, x)
+  zeropb.SetUint32(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 2, x)
 }
 
 func (m *ConfChange) NodeID() uint64 {
-  return zeropb.GetUint64(m.buf, m.offsets[:], 3)
+  return zeropb.GetUint64(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 3)
 }
 
 func (m *ConfChange) SetNodeID(x uint64) {
-  zeropb.SetUint64(&m.buf, m.offsets[:], 3, x)
+  zeropb.SetUint64(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 3, x)
 }
 
 func (m *ConfChange) Context() []byte {
-  return zeropb.GetBytes(m.buf, m.offsets[:], 4)
+  return zeropb.GetBytes(m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 4)
 }
 
 func (m *ConfChange) SetContext(x []byte) {
-  zeropb.SetBytes(&m.buf, m.offsets[:], 4, x)
+  zeropb.SetBytes(&m.buf, zeropb.WrapOffsets(m.offsets.a[:], &m.offsets.m), 4, x)
 }
 
